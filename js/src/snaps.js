@@ -17,33 +17,124 @@ function sin(a) {
 }
 
 function cos(a) {
-    return Math.sin(Math.PI * a / 180)
+    return Math.cos(Math.PI * a / 180)
 }
+
+function dist(a, b) {
+    if (typeof a === 'number' && typeof b === 'number') {
+        return Math.sqrt(a * a + b * b)
+    }
+    if (typeof a.x === 'number' && typeof b.y === 'number') {
+        return dist(a.x - b.x, a.y - b.y)
+    }
+    if (typeof a.left === 'number' && typeof b.top === 'number') {
+        return dist(a.left - b.left, a.top - b.top)
+    }
+    throw Error('dist junk')
+}
+
+function snapsMatch(snap, snap2) {
+    // test angles to see if they are 180º from each other
+    return Math.abs((snap.angle - snap2.angle + 180 + 360) % 360) < 5
+}
+
+function onMovingSnap(evt) {
+    // remove all circles
+    eachObject(item => {
+        if (item.type === 'circle') {
+            canvas.remove(item)
+        }
+    })
+
+    const { target: item } = evt
+    const snaps = snapsFor(item)
+    // snaps.forEach(snap => {
+    //     const dot = new fabric.Circle({
+    //         radius: 5,
+    //         fill: 'blue',
+    //         left: snap.x,
+    //         top: snap.y,
+    //         originX: 'center',
+    //         originY: 'center',
+    //     })
+    //     canvas.add(dot)
+    // })
+    let minSnap = null, minSnap2 = null, minSnapDist = 20 // don't snap past a certain distance
+    eachObject(item2 => {
+        if (item.id !== item2.id) {
+            const snaps2 = snapsFor(item2)
+            snaps.forEach(snap => {
+                snaps2.forEach(snap2 => {
+                    // const dot = new fabric.Circle({
+                    //     radius: 5,
+                    //     fill: 'red',
+                    //     left: snap2.x,
+                    //     top: snap2.y,
+                    //     originX: 'center',
+                    //     originY: 'center',
+                    // })
+                    // canvas.add(dot)
+                    // log('me:', snap.angle, 'you:', snap2.angle)
+                    if (snapsMatch(snap, snap2)) {
+                        const d = dist(snap, snap2)
+                        // log('d:', d)
+                        if (d < minSnapDist) {
+                            minSnap = snap
+                            minSnap2 = snap2
+                            minSnapDist = d
+                        }
+                    }
+                })
+            })
+        }
+    })
+    if (minSnap) {
+        // snap
+        item.left += minSnap2.x - minSnap.x
+        item.top += minSnap2.y - minSnap.y
+    }
+}
+
+$(document).ready(() => {
+    canvas.on({
+        'object:moving': onMovingSnap,
+    })
+})
 
 // return a list of snaps for a given widget
 // (probably would be easier if we were using Objects but I DGAF)
 function snapsFor(item) {
-    function a(deg = 0) { return (item.angle + deg + 360) % 360 }
+    const { angle, widget, width, height, left, top } = item
 
-    switch (item.widget) {
-        case STRAIGHT:
-            return [
-                { x: -item.width / 2, y: 0, angle: a(180) },
-                { x: item.width / 2, y: 0, angle: a(0) }
-            ]
-        case CROSSING:
-            return [
-                { x: -item.width / 2, y: 0, angle: a(180) }, // horiz left
-                { x: item.width / 2, y: 0, angle: a(0) }, // horiz right
-                { x: 0 / 2, y: -item.height / 2, angle: a(90) }, // vert top
-                { x: 0, y: 0, angle: a(270) } // vert bot
-            ]
-            break
-        case CURVE:
-        case LEFT_SWITCH:
-        case RIGHT_SWITCH:
-            break
-        default:
-            break
+    function rawSnaps() {
+        switch (widget) {
+            case STRAIGHT:
+                return [
+                    { x: -width / 2, y: 0 },
+                    { x: width / 2, y: 0 }
+                ]
+            case CROSSING:
+                return [
+                    { x: -width / 2, y: 0 }, // horiz left
+                    { x: width / 2, y: 0 }, // horiz right
+                    { x: 0, y: -height / 2 }, // vert top
+                    { x: 0, y: height / 2 } // vert bot
+                ]
+                break
+            case CURVE:
+            case SWITCH_LEFT:
+            case SWITCH_RIGHT:
+                break
+            default:
+                break
+        }
+        return []
     }
+    return rawSnaps().map(raw => {
+        return {
+            x: left + cos(angle) * raw.x - sin(angle) * raw.y,
+            y: top + sin(angle) * raw.x + cos(angle) * raw.y,
+            angle: angle + 180 * Math.atan2(raw.y, raw.x) / Math.PI // TODO won't work on curves
+        }
+    })
 }

@@ -78,16 +78,24 @@ function resizeCanvas() {
     canvas.setHeight(h)
 
     if (prevW && prevH) {
-        const dx = (w - prevW) / 2
-        const dy = (h - prevH) / 2
-
-        canvas.relativePan(new fabric.Point(dx, dy))
+        pan((prevW - w) / 2, (prevH - h) / 2)
     }
     prevW = w
     prevH = h
 
     canvas.calcOffset()
     renderAll('resizeCanvas')
+}
+
+function allObjects(optionalFilter) {
+    if (typeof optionalFilter === 'function') {
+        return canvas.getObjects().filter(optionalFilter)
+    }
+    return canvas.getObjects()
+}
+
+function eachObject(fn) {
+    return canvas.getObjects().forEach(fn)
 }
 
 function zoomToItems(items = canvas.getObjects()) {
