@@ -26,13 +26,18 @@ function rehydrate(item) {
     item.setControlsVisibility(CTRLS_WIDGET)
 }
 
-function load() {
-    const json = localStorage.getItem('train')
-    if (json) {
-        canvas.loadFromJSON(json, () => {
-            canvas.getObjects().forEach(rehydrate)
-        })
-    }
+async function load() {
+    return new Promise((resolve, reject) => {
+        const json = localStorage.getItem('train')
+        if (json) {
+            canvas.loadFromJSON(json, () => {
+                canvas.getObjects().forEach(rehydrate)
+                resolve()
+            })
+        } else {
+            resolve() // is okay
+        }
+    })
 }
 
 let pasteBuffer, pasteGroup

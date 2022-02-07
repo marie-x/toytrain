@@ -90,6 +90,18 @@ function resizeCanvas() {
     renderAll('resizeCanvas')
 }
 
+function zoomToItems(items = canvas.getObjects()) {
+    if (items.length === 0) { return }
+    let minX = 100000, minY = 100000, maxX = -100000, maxY = -100000
+    items.forEach(item => {
+        minX = Math.min(item.left - item.width, minX)
+        minY = Math.min(item.top - item.height, minY)
+        maxX = Math.max(item.left + item.width, maxX)
+        maxY = Math.max(item.top + item.width, maxY)
+    })
+    zoomToRect({ left: minX, top: minY, width: maxX - minX, height: maxY - minY })
+}
+
 $(window).bind('resizeEnd', resizeCanvas)
 
 function renderAll(why) {
@@ -130,6 +142,10 @@ function activeGroup() {
         }
     }
     return undefined
+}
+
+function setActiveObject(item) {
+
 }
 
 function nextAngle(item, direction) {
@@ -195,6 +211,7 @@ function rotateTo(item, theta) {
 }
 
 function onMoved(item) {
+    sortByLayer()
     save()
 }
 

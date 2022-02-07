@@ -11,10 +11,11 @@
 // - engine always on top
 // - zoom to extent on load
 
-const ENGINE = 'engine'
-
 function onMoving(evt) {
-
+    const active = activeObject() || activeGroup()
+    if (active) {
+        active.moved = true
+    }
 }
 
 function onRotated(evt) {
@@ -58,9 +59,17 @@ function onMouseMove(evt) {
             mouseDownPoint.x = lastMouseMove.screenX
             mouseDownPoint.y = lastMouseMove.screenY
         }
-        renderAll('_onMouseMove')
     }
     renderAll('_onMouseMove')
+}
+
+function onMouseUp(evt) {
+    canvas.getObjects().forEach(target => {
+        if (target.moved) {
+            canvas.fire('object:moved', { target })
+            delete target.moved
+        }
+    })
 }
 
 function onCreated(evt) {
@@ -68,42 +77,56 @@ function onCreated(evt) {
 }
 
 canvas.on({
+    'object:moved': onMoved,
     'object:moving': onMoving,
     'object:rotated': onRotated,
     'object:created': onCreated,
     'mouse:move': onMouseMove,
+    'mouse:up': onMouseUp,
 })
 
+const ENGINE = 'engine'
+const TREE = 'tree'
+const STRAIGHT = 'straight'
+const SWITCH_LEFT = 'switch-left'
+const SWITCH_RIGHT = 'switch-right'
+const CURVE = 'curve'
+const CROSSING = 'crossing'
+
 const art = {
-    tree: {
-        path: 'tree-f.png', size: { width: 113, height: 104 }
+    [TREE]: {
+        path: 'tree-f.png'
     },
-    straight: {
+    [STRAIGHT]: {
         path: 'straight-f.png'
     },
-    left: {
+    [SWITCH_LEFT]: {
         path: 'switch-left-f.png'
     },
-    right: {
+    [SWITCH_RIGHT]: {
         path: 'switch-right-f.png'
     },
-    curve: {
+    [CURVE]: {
         path: 'curve-f.png'
     },
-    engine: {
+    [ENGINE]: {
         path: 'engine-f.png'
     },
-    crossing: {
+    [CROSSING]: {
         path: 'crossing-f.png'
     }
 }
 
 function sortByLayer() {
     function layer(item) {
-        if (item.widget === ENGINE) {
-            return 0
+        switch (item.widget) {
+            case ENGINE:
+                return 0
+            case CROSSING:
+                return 1
+            default:
+                return 0
         }
-        return 1
     }
 
     // have to access the _objects directly with latest fabric
@@ -131,23 +154,23 @@ async function addWidget(where, widget) {
 }
 
 addVerb('addTree', evt => {
-    return addWidget(evt, 'tree')
+    return addWidget(evt, TREE)
 })
 
 addVerb('addCurve', evt => {
-    return addWidget(evt, 'curve')
+    return addWidget(evt, CURVE)
 })
 
 addVerb('addLeft', evt => {
-    return addWidget(evt, 'left')
+    return addWidget(evt, SWITCH_LEFT)
 })
 
 addVerb('addRight', evt => {
-    return addWidget(evt, 'right')
+    return addWidget(evt, SWITCH_RIGHT)
 })
 
 addVerb('addStraight', evt => {
-    return addWidget(evt, 'straight')
+    return addWidget(evt, STRAIGHT)
 })
 
 addVerb('addEngine', evt => {
@@ -155,7 +178,7 @@ addVerb('addEngine', evt => {
 })
 
 addVerb('addCrossing', evt => {
-    return addWidget(evt, 'crossing')
+    return addWidget(evt, CROSSING)
 })
 
 addVerb('remove', (evt) => {
@@ -168,9 +191,12 @@ addVerb('remove', (evt) => {
     return true
 })
 
-load()
-resizeCanvas()
-renderAll()
+$(document).ready(async () => {
+    resizeCanvas()
+    await load()
+    zoomToItems()
+    renderAll()
+})
 
 let velocity = 0.1
 

@@ -26,14 +26,11 @@ function snapsFor(item) {
     function a(deg = 0) { return (item.angle + deg + 360) % 360 }
 
     switch (item.widget) {
-        case LEFT_SWITCH:
-        case RIGHT_SWITCH:
         case STRAIGHT:
             return [
                 { x: -item.width / 2, y: 0, angle: a(180) },
                 { x: item.width / 2, y: 0, angle: a(0) }
             ]
-        case CURVE:
         case CROSSING:
             return [
                 { x: -item.width / 2, y: 0, angle: a(180) }, // horiz left
@@ -41,6 +38,12 @@ function snapsFor(item) {
                 { x: 0 / 2, y: -item.height / 2, angle: a(90) }, // vert top
                 { x: 0, y: 0, angle: a(270) } // vert bot
             ]
+            break
+        case CURVE:
+        case LEFT_SWITCH:
+        case RIGHT_SWITCH:
+            break
+        default:
             break
     }
 }
