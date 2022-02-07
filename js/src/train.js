@@ -8,7 +8,10 @@
 // - smoke puffs
 // - sounds
 // - snap track to track
-// - zoom in/out
+// - engine always on top
+// - zoom to extent on load
+
+const ENGINE = 'engine'
 
 function onMoving(evt) {
 
@@ -20,17 +23,28 @@ function onRotated(evt) {
 
 let crosshair
 let cmdKey, shiftKey, spaceKey
+let mouseDownPoint, mouseDownCanvasOffset
+
+function metaDown() {
+    canvas.defaultCursor = 'all-scroll'
+    mouseDownPoint = {
+        x: lastMouseMove.screenX,
+        y: lastMouseMove.screenY
+    }
+    mouseDownCanvasOffset = {
+        x: -canvas.viewportTransform[4],
+        y: -canvas.viewportTransform[5]
+    }
+    renderAll('_spaceDown')
+}
 
 function onMouseMove(evt) {
-    lastMouseMove = evt
+    lastMouseMove = evt.e
     crosshair = evt.pointer
-
-    // FIXME
-    cmdKey = evt.metaKey
-    shiftKey = evt.shiftKey
+    const { metaKey, shiftKey } = evt.e
 
     // scroll the screen around
-    if (spaceKey && mouseDownPoint) {
+    if (metaKey && mouseDownPoint) {
         const dx = mouseDownPoint.x - lastMouseMove.screenX
         const dy = mouseDownPoint.y - lastMouseMove.screenY
 
@@ -49,9 +63,14 @@ function onMouseMove(evt) {
     renderAll('_onMouseMove')
 }
 
+function onCreated(evt) {
+    sortByLayer()
+}
+
 canvas.on({
     'object:moving': onMoving,
     'object:rotated': onRotated,
+    'object:created': onCreated,
     'mouse:move': onMouseMove,
 })
 
@@ -73,7 +92,24 @@ const art = {
     },
     engine: {
         path: 'engine-f.png'
+    },
+    crossing: {
+        path: 'crossing-f.png'
     }
+}
+
+function sortByLayer() {
+    function layer(item) {
+        if (item.widget === ENGINE) {
+            return 0
+        }
+        return 1
+    }
+
+    // have to access the _objects directly with latest fabric
+    canvas._objects.sort((a, b) => {
+        return layer(a) - layer(b)
+    })
 }
 
 async function addWidget(where, widget) {
@@ -91,6 +127,7 @@ async function addWidget(where, widget) {
     img.top = where.top || 0
     rehydrate(img)
     addToCanvas(img)
+    return img
 }
 
 addVerb('addTree', evt => {
@@ -114,7 +151,11 @@ addVerb('addStraight', evt => {
 })
 
 addVerb('addEngine', evt => {
-    return addWidget(evt, 'engine')
+    return addWidget(evt, ENGINE)
+})
+
+addVerb('addCrossing', evt => {
+    return addWidget(evt, 'crossing')
 })
 
 addVerb('remove', (evt) => {
@@ -135,7 +176,7 @@ let velocity = 0.1
 
 function tick() {
     // move trains
-    canvas.getObjects().filter(item => item.widget === 'engine').forEach(engine => {
+    canvas.getObjects().filter(item => item.widget === ENGINE).forEach(engine => {
         // move engine
         engine.top += velocity * Math.sin(Math.PI * engine.angle / 180)
         engine.left += velocity * Math.cos(Math.PI * engine.angle / 180)

@@ -337,15 +337,91 @@ function addToCanvas(item, skipSelect) {
         // FIXME consider deleting or something
     }
     canvas.add(item)
-    // if (!skipSelect) {
-    //     sendFront(item)
-    //     if (item.evented) {
-    //         setActiveObject(item)
-    //     }
-    //     renderAll('addToCanvas')
-    // }
+    if (item.evented) {
+        setActiveObject(item)
+    }
     // _idCache[item.id] = item
     canvas.fire('object:created', { target: item })
     renderAll()
     return item
 }
+
+function showZoom() {
+    // TODO
+}
+
+function zoomToRect(rect, ratio) {
+    if (ratio === undefined) {
+        const rw = canvas.width / rect.width
+        const rh = canvas.height / rect.height
+        ratio = Math.min(rw, rh) * 0.95
+    }
+    const center = new fabric.Point(rect.left, rect.top)
+    if (rect.originX !== 'center') {
+        center.x += rect.width / 2
+    }
+    if (rect.originY !== 'center') {
+        center.y += rect.height / 2
+    }
+    canvas.zoomToPoint(center, ratio)
+    const panX = -canvas.width * 0.5 + ratio * center.x
+    const panY = -canvas.height * 0.5 + ratio * center.y
+    canvas.absolutePan(new fabric.Point(panX, panY))
+    renderAll('_zoomToRect')
+}
+
+$(document).ready(() => {
+    addVerb('zoomIn', evt => {
+        const group = activeGroup() || activeObject()
+        if (group) {
+            zoomToRect(group, canvas.getZoom() * 1.1)
+        } else {
+            canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), canvas.getZoom() * 1.1)
+            allObjects(obj => obj.setCoords())
+        }
+        showZoom()
+        renderAll('zoomIn')
+    })
+
+    addVerb('zoomOut', evt => {
+        canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), canvas.getZoom() / 1.1)
+        allObjects(obj => obj.setCoords())
+        showZoom()
+        renderAll('zoomIn')
+    })
+})
+
+function onMouseWheel(evt) {
+    const target = canvas.findTarget(evt)
+    let delta = -evt.originalEvent.wheelDelta / 120
+    if (isNaN(delta)) {
+        // fuck you FireFox
+        evt = evt.originalEvent
+        delta = evt.detail / 12
+    }
+    if (Math.abs(delta) < 0.001) {
+        return
+    }
+    const pt = canvas.getPointer(evt)
+
+    let factor
+    if (delta < 1) {
+        factor = 1 - delta / 2
+    } else {
+        factor = 1 / (1 + delta / 2)
+    }
+
+    const newZoom = Math.min(25, Math.max(0.03, canvas.getZoom() * factor))
+    // log('zoom', newZoom)
+    canvas.zoomToPoint(new fabric.Point(evt.offsetX, evt.offsetY), newZoom)
+    showZoom()
+
+    // recalc coords after zoom to prevent offscreen bugs
+    // TODO figure out if we can limit to only at-risk items
+    canvas.getObjects().forEach(item => item.visible && item.setCoords())
+
+    renderAll('_onMouseWheel')
+    evt.preventDefault()
+}
+
+$(canvas.wrapperEl).on('mousewheel DOMMouseScroll', onMouseWheel)

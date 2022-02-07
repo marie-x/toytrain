@@ -14,8 +14,8 @@
 
 $(document).ready(() => {
 
-    canvasWrapper.addEventListener('keydown', _keyDown, false)
-    canvasWrapper.addEventListener('keyup', _keyUp, false)
+    canvasWrapper.addEventListener('keydown', keyDown, false)
+    canvasWrapper.addEventListener('keyup', keyUp, false)
 
     const KEY_CODES = {
         8: 'delete',
@@ -58,7 +58,7 @@ $(document).ready(() => {
         return ''
     }
 
-    function _keyDown(evt) {
+    function keyDown(evt) {
 
         let key = KEY_CODES[evt.keyCode]
         if (!key) {
@@ -188,6 +188,7 @@ $(document).ready(() => {
                 break
             case 83: // S
                 tryVerb('addStraight', evt)
+                break
             case 84: // T
                 tryVerb('addTree', evt)
                 break
@@ -197,9 +198,14 @@ $(document).ready(() => {
             case 88: // X
                 if (cmd) {
                     _keyCut(evt)
+                } else {
+                    tryVerb('addCrossing', evt)
                 }
             case 89: // Y
             case 90: // Z
+                break
+            case 91: // cmd/meta
+                metaDown(evt)
                 break
             case 187: // +
                 tryVerb('zoomIn', evt)
@@ -220,7 +226,7 @@ $(document).ready(() => {
         // priorKeyEvent = evt
     }
 
-    function _keyUp(evt) {
+    function keyUp(evt) {
         const keyName = KEY_CODES[evt.keyCode]
         if (keyName) {
             const fn = keyName + 'Up'
@@ -242,7 +248,7 @@ $(document).ready(() => {
         }
         // main body consumed it; redirect to the drafting table handler
         if (evt.target.id === 'draftingTable') {
-            _keyDown(evt)
+            keyDown(evt)
             return
         }
         // FIXME use verb lib
