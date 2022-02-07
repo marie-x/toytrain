@@ -1,12 +1,27 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Chugga Chugga</title>
-    </head>
-    <body>
-		<script type="text/javascript" src="processing-0.9.7.js"></script>
-		<canvas datasrc="train.pjs" width="640" height="480"></canvas>    
-	</body>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Toy Train</title>
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+</head>
+
+<body id="draftingTable">
+    <div id="c3-container" class="draftingTable" ondrop="dropSomething(event)" ondragover="allowDrop(event)">
+        <canvas id="c3"></canvas>
+    </div>
+</body>
+
+<script src="lib/fabric.js"></script>
+<script src="lib/jquery-3.6.0.min.js"></script>
+<script src="src/log.js"></script>
+<script src="src/canvas.js"></script>
+<script src="src/keys.js"></script>
+<script src="src/train.js"></script>
+
 </html>
