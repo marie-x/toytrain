@@ -83,73 +83,124 @@ $(document).ready(() => {
         const alt = evt.altKey
         const ctrl = evt.ctrlKey
         const cmd = evt.metaKey
+        if (cmd && evt.keyCode === 82) {
+            return // let's not on reload
+        }
 
         // FIXME constants
         // FIXME keyCode is deprecated!!
         switch (evt.keyCode) {
             case 8: // delete
             case 46: // backspace
+                tryVerb('remove', evt)
+                break
             case 13: // enter
             case 27: // esc
                 break
             case 37: // left
                 if (!shift && !alt) {
-                    _pan(-2 * STEP, 0)
+                    pan(-2 * STEP, 0)
                 } else if (active && shift && !alt) {
-                    _rotate(active, -1)
+                    rotate(active, -1)
                 } else if (active && alt) {
                     if (!active.lockMovementX) {
-                        _move(active, -STEP, 0)
+                        move(active, -STEP, 0)
                     }
                 }
                 break
             case 39: // right
                 if (!shift && !alt) {
-                    _pan(2 * STEP, 0)
+                    pan(2 * STEP, 0)
                 } else if (active && shift && !alt) {
-                    _rotate(active, 1)
+                    rotate(active, 1)
                 } else if (active && alt) {
                     if (!active.lockMovementX) {
-                        _move(active, STEP, 0)
+                        move(active, STEP, 0)
                     }
                 }
                 break
             case 38: // up
                 if (!shift && !alt) {
-                    _pan(0, -2 * STEP)
-                } else if (active && shift && !alt) {
-                    // cycle through format styles
-                    applyToActive(item2 => δ.rotateLayout(item2, 1))
+                    pan(0, -2 * STEP)
                 } else if (active) {
                     if (!active.lockMovementY) {
-                        _move(active, 0, -STEP)
+                        move(active, 0, -STEP)
                     }
                 }
                 break
             case 40: // down
                 if (!shift && !alt) {
-                    _pan(0, 2 * STEP)
-                } else if (active && shift && !alt) {
-                    // cycle backward through format styles
-                    applyToActive(item2 => δ.rotateLayout(item2, -1))
+                    pan(0, 2 * STEP)
                 } else if (active) {
                     if (!active.lockMovementY) {
-                        _move(active, 0, STEP)
+                        move(active, 0, STEP)
                     }
                 }
                 break
+            case 48: // 0
+                velocity = 0
+                break
             case 49: // 1
+                velocity = 0.25
+                break
             case 50: // 2
+                velocity = 0.5
+                break
             case 51: // 3
+                velocity = 0.75
+                break
             case 52: // 4
+                velocity = 1.0
+                break
             case 53: // 5
             case 54: // 6
             case 65: // A
             case 66: // B
             case 67: // C
+                if (cmd) {
+                    _keyCopy(evt)
+                } else {
+                    tryVerb('addCurve', evt)
+                }
+                break
+            case 68: // D
+            case 69: // E
+                tryVerb('addEngine', evt)
+                break
+            case 70: // F
+            case 71: // G
+            case 72: // H
+            case 73: // I
+            case 74: // J
+            case 75: // K
+                break
+            case 76: // L
+                tryVerb('addLeft', evt)
+                break
+            case 80: // P
+                if (cmd) {
+                    _keyPaste(evt)
+                }
+                break
+            case 81: // Q
+            case 82: // R
+                tryVerb('addRight', evt)
+                break
+            case 83: // S
+                tryVerb('addStraight', evt)
+            case 84: // T
+                tryVerb('addTree', evt)
+                break
+            case 85: // U
+            case 86: // V
+            case 87: // W
             case 88: // X
+                if (cmd) {
+                    _keyCut(evt)
+                }
             case 89: // Y
             case 90: // Z
+                break
             case 187: // +
                 tryVerb('zoomIn', evt)
                 break

@@ -37,15 +37,17 @@ const verbExceptions = {
 
 function addVerb(verbName, verbMethod, replace) {
     if (typeof verbName == 'function') {
-        _err('cannot add verb "' + verbName.name + '"; it won\'t survive minification')
+        error('cannot add verb "' + verbName.name + '"; it won\'t survive minification')
         return
     }
     if (verbs[verbName] && !replace) {
-        _err('cannot add redundant verb: "' + verbName + '"')
+        error('cannot add redundant verb: "' + verbName + '"')
     } else {
         verbs[verbName] = verbMethod
     }
 }
+
+let lastVerb
 
 function tryVerb(verb, evt, silent) {
     // FIXME eventually get rid of reference to 'window'
@@ -58,29 +60,29 @@ function tryVerb(verb, evt, silent) {
         let result = null
         try {
             lastVerb = verb
-            actionPush(verb)
+            // actionPush(verb)
             result = verbMethod(evt)
         } catch (e) {
-            _err('fail during', verb, e.message, e.stack)
+            error('fail during', verb, e.message, e.stack)
         }
         if (result && typeof result.then === 'function') {
             // don't save if it was a result, because it's got async stuff to do
             result.then(result2 => {
                 if (!doNotSaveVerbs[verb] && Boolean(result2)) {
-                    δ.save('verb*:' + verb)
+                    save('verb*:' + verb)
                 }
             })
         } else if (!doNotSaveVerbs[verb] && (result === undefined || Boolean(result))) {
             // verbs should return true/false as to whether saving is merited.
             // but for those that don't return anything, better to save than not
-            δ.save('verb:' + verb + ' result:' + result)
+            save('verb:' + verb + ' result:' + result)
         }
         renderAll('tryVerb')
         $('body').removeClass('waiting')
         return result
     }
     if (!silent) {
-        _err(verb, 'is not a recognized verb')
+        error(verb, 'is not a recognized verb')
     }
     return undefined
 }
