@@ -8,8 +8,6 @@
 // - smoke puffs
 // - sounds
 // - snap track to track
-// - engine always on top
-// - zoom to extent on load
 
 function onMoving(evt) {
     const active = activeObject() || activeGroup()

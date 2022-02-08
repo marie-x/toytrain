@@ -161,7 +161,7 @@ function nextAngle(item, direction) {
     const legitLightAngles = [0, 45, 90, 135, 180, 225, 270, 315]
     const legitOtherAngles = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330]
 
-    let legitAngles = legitOtherAngles
+    let legitAngles = legitLightAngles
     // if (item.isUnit() || item.isPipe()) {
     //     legitAngles = legitLightAngles
     // } else if (item.isRuler()) {

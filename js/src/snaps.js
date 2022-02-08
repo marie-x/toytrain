@@ -48,17 +48,17 @@ function onMovingSnap(evt) {
 
     const { target: item } = evt
     const snaps = snapsFor(item)
-    // snaps.forEach(snap => {
-    //     const dot = new fabric.Circle({
-    //         radius: 5,
-    //         fill: 'blue',
-    //         left: snap.x,
-    //         top: snap.y,
-    //         originX: 'center',
-    //         originY: 'center',
-    //     })
-    //     canvas.add(dot)
-    // })
+    snaps.forEach(snap => {
+        const dot = new fabric.Circle({
+            radius: 5,
+            fill: 'blue',
+            left: snap.x,
+            top: snap.y,
+            originX: 'center',
+            originY: 'center',
+        })
+        canvas.add(dot)
+    })
     let minSnap = null, minSnap2 = null, minSnapDist = 20 // don't snap past a certain distance
     eachObject(item2 => {
         if (item.id !== item2.id) {
@@ -105,6 +105,9 @@ $(document).ready(() => {
 // (probably would be easier if we were using Objects but I DGAF)
 function snapsFor(item) {
     const { angle, widget, width, height, left, top } = item
+    const W = 45 // track width
+    const bx = W / 2 * sin(45)
+    const by = W / 2 * cos(45)
 
     function rawSnaps() {
         switch (widget) {
@@ -122,8 +125,22 @@ function snapsFor(item) {
                 ]
                 break
             case CURVE:
+                return [
+                    { x: -width / 2, y: height / 2 - W / 2, angle: 180 },
+                    { x: width / 2 - bx, y: -height / 2 + by, angle: -45 }
+                ]
             case SWITCH_LEFT:
+                return [
+                    { x: -width / 2, y: height / 2 - W / 2, angle: 180 },
+                    { x: width / 2 - bx, y: height / 2 - W / 2, angle: 0 },
+                    { x: width / 2 - bx, y: -height / 2 + by, angle: -45 }
+                ]
             case SWITCH_RIGHT:
+                return [
+                    { x: -width / 2, y: -height / 2 + W / 2, angle: 180 },
+                    { x: width / 2 - bx, y: -height / 2 + W / 2, angle: 0 },
+                    { x: width / 2 - bx, y: height / 2 - by, angle: 45 }
+                ]
                 break
             default:
                 break
@@ -134,7 +151,7 @@ function snapsFor(item) {
         return {
             x: left + cos(angle) * raw.x - sin(angle) * raw.y,
             y: top + sin(angle) * raw.x + cos(angle) * raw.y,
-            angle: angle + 180 * Math.atan2(raw.y, raw.x) / Math.PI // TODO won't work on curves
+            angle: angle + (raw.angle === undefined ? 180 * Math.atan2(raw.y, raw.x) / Math.PI : raw.angle)
         }
     })
 }
