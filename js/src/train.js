@@ -1,13 +1,20 @@
 // train.js
 
 // TODO:
-// - add engine
-// - speed/slow engine movement
-// - snap engine to track
+// - add velocity to each engine
 // - undo/redo
 // - smoke puffs
 // - sounds
-// - snap track to track
+// - physics should use clock time not tick interval
+// - make sure switches work
+// - some sort of indication of switched/not-switched
+// - some way to toggle switched/not-switched
+// - selected group should still have snap points
+// - add track doesn't drop item under mouse
+// - add track should be smarter about extending from current selection
+// - add boxcars
+// - add hookup between boxcars so that they can be pulled
+
 
 function onMoving(evt) {
     const active = activeObject() || activeGroup()
@@ -90,6 +97,9 @@ const SWITCH_LEFT = 'switch-left'
 const SWITCH_RIGHT = 'switch-right'
 const CURVE = 'curve'
 const CROSSING = 'crossing'
+const BOXCAR = 'boxcar'
+const BOXCAR2 = 'boxcar2'
+const CABOOSE = 'caboose'
 
 const art = {
     [TREE]: {
@@ -112,6 +122,15 @@ const art = {
     },
     [CROSSING]: {
         path: 'crossing-f.png'
+    },
+    [BOXCAR]: {
+        path: 'car-blue-f.png'
+    },
+    [BOXCAR2]: {
+        path: 'car-red-f.png'
+    },
+    [CABOOSE]: {
+        path: 'caboose-f.png'
     }
 }
 
@@ -119,6 +138,10 @@ function sortByLayer() {
     function layer(item) {
         switch (item.widget) {
             case ENGINE:
+                return 3
+            case BOXCAR:
+            case BOXCAR2:
+            case CABOOSE:
                 return 2
             case CROSSING:
                 return 1
@@ -173,6 +196,18 @@ addVerb('addStraight', evt => {
 
 addVerb('addEngine', evt => {
     return addWidget(evt, ENGINE)
+})
+
+addVerb('addBoxcar', evt => {
+    return addWidget(evt, BOXCAR)
+})
+
+addVerb('addBoxcar2', evt => {
+    return addWidget(evt, BOXCAR2)
+})
+
+addVerb('addCaboose', evt => {
+    return addWidget(evt, CABOOSE)
 })
 
 addVerb('addCrossing', evt => {

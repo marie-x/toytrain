@@ -159,7 +159,11 @@ $(document).ready(() => {
                 velocity = 3.0
                 break
             case 65: // A
+                tryVerb('addCaboose', evt)
+                break
             case 66: // B
+                tryVerb('addBoxcar', evt)
+                break
             case 67: // C
                 if (cmd) {
                     _keyCopy(evt)
@@ -168,6 +172,8 @@ $(document).ready(() => {
                 }
                 break
             case 68: // D
+                tryVerb('addBoxcar2', evt)
+                break
             case 69: // E
                 tryVerb('addEngine', evt)
                 break
