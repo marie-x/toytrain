@@ -137,6 +137,8 @@ const art = {
 function sortByLayer() {
     function layer(item) {
         switch (item.widget) {
+            case undefined:
+                return 4
             case ENGINE:
                 return 3
             case BOXCAR:
@@ -171,6 +173,7 @@ async function addWidget(where, widget) {
     img.top = where.top || 0
     rehydrate(img)
     addToCanvas(img)
+    setActiveObject(img)
     return img
 }
 
@@ -232,18 +235,21 @@ $(document).ready(async () => {
 })
 
 let velocity = 0.0
-
+let { now } = Date
+let lastTick = now()
 
 function tick() {
+    eachObject(item => {
+        if (item.type === 'circle') {
+            canvas.remove(item)
+        }
+        delete item.marked
+    })
     sortByLayer()
     // move trains
-    canvas.getObjects().filter(item => item.widget === ENGINE).forEach(engine => {
-        // move engine
-        // snap
-        // get the closest arc or segment
-        onMovingEngine({ target: engine })
-        engine.setCoords()
-    })
+    const currentTick = now()
+    allObjects(item => item.widget === ENGINE).forEach(engine => onMovingEngine({ engine, ticks: currentTick - lastTick }))
+    lastTick = currentTick
     renderAll()
 }
 

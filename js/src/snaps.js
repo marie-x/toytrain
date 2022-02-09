@@ -211,7 +211,7 @@ function arcsFor(item) {
             case SWITCH_LEFT:
                 return [{ x: -width / 2, y: -radius, start: 45, end: 90 }]
             case SWITCH_RIGHT:
-                return [{ x: -width / 2, y: radius, start: 225, end: 270 }]
+                return [{ x: -width / 2, y: radius, start: 270, end: 315 }]
             default:
                 return []
         }
@@ -266,7 +266,11 @@ function projectOnSeg(pt, seg, extend) {
 
 function eachTrack(fn) {
     eachObject(item => {
-        if (item.widget !== ENGINE) {
+        if (item.widget !== ENGINE &&
+            item.widget !== BOXCAR &&
+            item.widget !== BOXCAR2 &&
+            item.widget !== CABOOSE &&
+            item.widget !== TREE) {
             fn(item)
         }
     })
@@ -283,32 +287,32 @@ function angleDiff(a, b) {
     return d
 }
 
-const MIN_INCIDENT = 22.5
+const MIN_INCIDENT = 35
 
-// just straight lines at first FIXME
-function onMovingEngine(evt) {
-    if (velocity === 0) { return }
-    eachObject(item => {
-        if (item.type === 'circle') {
-            canvas.remove(item)
-        }
-    })
-    const { target: engine } = evt
-    engine.left += velocity * cos(engine.angle)
-    engine.top += velocity * sin(engine.angle)
+function makeDot(params) {
+    canvas.add(new fabric.Circle({
+        fill: 'red',
+        radius: 5,
+        originX: 'center',
+        originY: 'center',
+        ...params
+    }))
+}
 
-    let minPt = null, minAngle = null, minDist = 20 // don't snap past a certain distance
+
+function getTrackSnap(car) {
+    let minPt = null, minAngle = null, minDist = 35 // don't snap past a certain distance
     eachTrack(track => {
         const segments = segmentsFor(track)
         segments.forEach(seg => {
             const segAngle = 180 * Math.atan2(seg.y2 - seg.y1, seg.x2 - seg.x1) / Math.PI
             const segAngle2 = 180 + segAngle
-            const fwd = angleDiff(engine.angle, segAngle) < MIN_INCIDENT
-            const rev = angleDiff(engine.angle, segAngle2) < MIN_INCIDENT
-            // log('seg', engine.angle, segAngle, fwd, segAngle2, rev)
+            const fwd = angleDiff(car.angle, segAngle) < MIN_INCIDENT
+            const rev = angleDiff(car.angle, segAngle2) < MIN_INCIDENT
+            // log('seg', car.angle, segAngle, fwd, segAngle2, rev)
             if (fwd || rev) {
-                const projection = projectOnSeg(engine, seg)
-                const d = dist(engine, projection)
+                const projection = projectOnSeg(car, seg)
+                const d = dist(car, projection)
                 // log('d:', d)
                 if (d < minDist) {
                     minPt = projection
@@ -318,61 +322,20 @@ function onMovingEngine(evt) {
             }
         })
 
-        function makeDot(params) {
-            return new fabric.Circle({
-                radius: 5,
-                originX: 'center',
-                originY: 'center',
-                ...params
-            })
-        }
 
         const arcs = arcsFor(track)
         arcs.forEach(arc => {
             // see how far we are from the point
-            const dc = dist(engine, arc)
+            const dc = dist(car, arc)
             const d = Math.abs(dc - arc.radius)
             const dd = false // d < 100
-            const angleC = angle(180 + 180 * Math.atan2(arc.y - engine.top, arc.x - engine.left) / Math.PI)
+            const angleC = angle(180 + 180 * Math.atan2(arc.y - car.top, arc.x - car.left) / Math.PI)
             const arcAngle = angle(angleC + 90)
             const arcAngle2 = angle(angleC - 90)
-            // const dot = makeDot({
-            //     fill: 'red',
-            //     left: arc.x,
-            //     top: arc.y,
-            // })
-            // canvas.add(dot)
-            // const dot2 = makeDot({
-            //     fill: 'yellow',
-            //     left: arc.x + arc.radius * cos(arc.start),
-            //     top: arc.y + arc.radius * sin(arc.start),
-            // })
-            // canvas.add(dot2)
-            // const dot3 = makeDot({
-            //     fill: 'orange',
-            //     left: arc.x + arc.radius * cos(arc.end),
-            //     top: arc.y + arc.radius * sin(arc.end),
-            // })
-            // canvas.add(dot3)
-            // const dot4 = makeDot({
-            //     fill: 'green',
-            //     left: arc.x + arc.radius * cos(0),
-            //     top: arc.y + arc.radius * sin(0),
-            // })
-            // canvas.add(dot4)
-            // const dot5 = makeDot({
-            //     fill: 'purple',
-            //     left: arc.x + arc.radius * cos(90),
-            //     top: arc.y + arc.radius * sin(90),
-            // })
-            // canvas.add(dot5)
-            dd && log('arc', 'e:' + engine.angle, '|:' + angleC, '+' + arcAngle, '-' + arcAngle2, arc.start + '...' + arc.end)
             if (angleC > arc.start && angleC < (arc.end || 360)) {
-                const fwd = angleDiff(engine.angle, arcAngle) < MIN_INCIDENT
-                const rev = angleDiff(engine.angle, arcAngle2) < MIN_INCIDENT
-                dd && log('arc2', 'r:' + arc.radius, 'dc:' + dc, 'd:' + d, 'f:' + fwd, 'r:' + rev)
+                const fwd = angleDiff(car.angle, arcAngle) < MIN_INCIDENT
+                const rev = angleDiff(car.angle, arcAngle2) < MIN_INCIDENT
                 if (fwd || rev) {
-                    dd && log('d:', d)
                     if (d < minDist) {
                         minDist = d
                         minAngle = fwd ? arcAngle : arcAngle2
@@ -386,13 +349,88 @@ function onMovingEngine(evt) {
             }
         })
     })
+    return { minAngle, minPt }
+}
+
+function closestCar(pt, radius) {
+    // look at all cars, find one 180º behind me
+    let minCar = null, minDist = radius
+    allObjects(item => {
+        if (!item.marked) {
+            const { widget } = item
+            if (widget === BOXCAR || widget === BOXCAR2 || widget === CABOOSE) {
+                const d = dist(item, pt)
+                if (d < minDist && angleDiff(pt.angle, item.angle) <= 45) {
+                    minCar = item
+                    minDist = d
+                }
+            }
+        }
+    })
+
+    return minCar
+}
+
+// just straight lines at first FIXME
+function onMovingEngine(evt) {
+    if (velocity === 0) { return }
+
+    // TODO use ticks
+    const { engine, ticks } = evt
+    let trail = engine.antTrail = engine.antTrail || []
+    trail.push({ x: engine.left, y: engine.top, angle: engine.angle })
+    while (dist(engine, trail[0]) > engine.width) {
+        trail.shift()
+    }
+
+    engine.left += velocity * cos(engine.angle)
+    engine.top += velocity * sin(engine.angle)
+
+    let { minPt, minAngle } = getTrackSnap(engine)
     if (minPt && minPt.u >= 0 && minPt.u <= 1) {
         // log('snap', minPt, minAngle, engine.angle)
-        // snap
-        // set engine angle and location to projected point on segment
         engine.left = minPt.x
         engine.top = minPt.y
         engine.angle = minAngle
+        engine.setCoords()
+    }
+
+    // find a trail of boxcars and caboooooses
+    let leadCar = engine
+    let { width } = leadCar
+    let sixOClock = trail[0]
+    // log(sixOClock, width)
+    makeDot({ left: sixOClock.x, top: sixOClock.y })
+    let tailCar = closestCar(sixOClock, width)
+    while (tailCar) {
+        // put car on my ant trail 
+        tailCar.left = sixOClock.x
+        tailCar.top = sixOClock.y
+        tailCar.angle = sixOClock.angle
+        tailCar.marked = true // little sleazy FIXME
+
+        // snap
+        let { minPt, minAngle } = getTrackSnap(tailCar)
+        if (minPt) {
+            tailCar.left = minPt.x
+            tailCar.top = minPt.y
+            // FIXME address weird snap-jumps
+            if (Math.abs(tailCar.angle, minAngle) < 3) {
+                tailCar.angle = minAngle
+            }
+            tailCar.setCoords()
+        }
+
+        // next
+        leadCar = tailCar
+        width = leadCar.width
+        trail = leadCar.antTrail = leadCar.antTrail || []
+        trail.push({ x: leadCar.left, y: leadCar.top, angle: leadCar.angle })
+        while (dist(leadCar, trail[0]) > engine.width) {
+            trail.shift()
+        }
+        sixOClock = trail[0]
+        tailCar = closestCar(sixOClock, width)
     }
 }
 
