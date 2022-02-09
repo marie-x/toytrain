@@ -141,19 +141,23 @@ $(document).ready(() => {
                 velocity = 0
                 break
             case 49: // 1
-                velocity = 0.25
-                break
-            case 50: // 2
                 velocity = 0.5
                 break
-            case 51: // 3
-                velocity = 0.75
-                break
-            case 52: // 4
+            case 50: // 2
                 velocity = 1.0
                 break
+            case 51: // 3
+                velocity = 1.5
+                break
+            case 52: // 4
+                velocity = 2.0
+                break
             case 53: // 5
+                velocity = 2.5
+                break
             case 54: // 6
+                velocity = 3.0
+                break
             case 65: // A
             case 66: // B
             case 67: // C

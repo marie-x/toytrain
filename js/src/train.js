@@ -119,7 +119,7 @@ function sortByLayer() {
     function layer(item) {
         switch (item.widget) {
             case ENGINE:
-                return 0
+                return 2
             case CROSSING:
                 return 1
             default:
@@ -196,14 +196,17 @@ $(document).ready(async () => {
     renderAll()
 })
 
-let velocity = 0.1
+let velocity = 0.0
+
 
 function tick() {
+    sortByLayer()
     // move trains
     canvas.getObjects().filter(item => item.widget === ENGINE).forEach(engine => {
         // move engine
-        engine.top += velocity * Math.sin(Math.PI * engine.angle / 180)
-        engine.left += velocity * Math.cos(Math.PI * engine.angle / 180)
+        // snap
+        // get the closest arc or segment
+        onMovingEngine({ target: engine })
         engine.setCoords()
     })
     renderAll()
