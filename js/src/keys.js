@@ -138,25 +138,25 @@ $(document).ready(() => {
                 }
                 break
             case 48: // 0
-                velocity = 0
+                setVelocity(0)
                 break
             case 49: // 1
-                velocity = 0.5
+                setVelocity(0.5)
                 break
             case 50: // 2
-                velocity = 1.0
+                setVelocity(1.0)
                 break
             case 51: // 3
-                velocity = 1.5
+                setVelocity(1.5)
                 break
             case 52: // 4
-                velocity = 2.0
+                setVelocity(2.0)
                 break
             case 53: // 5
-                velocity = 2.5
+                setVelocity(2.5)
                 break
             case 54: // 6
-                velocity = 3.0
+                setVelocity(3.0)
                 break
             case 65: // A
                 tryVerb('addCaboose', evt)
@@ -205,12 +205,19 @@ $(document).ready(() => {
             case 85: // U
             case 86: // V
             case 87: // W
+                if (active) {
+                    if (active.widget === SWITCH_LEFT || active.widget === SWITCH_RIGHT) {
+                        active.switched = !active.switched
+                    }
+                }
+                break
             case 88: // X
                 if (cmd) {
                     _keyCut(evt)
                 } else {
                     tryVerb('addCrossing', evt)
                 }
+                break
             case 89: // Y
             case 90: // Z
                 break

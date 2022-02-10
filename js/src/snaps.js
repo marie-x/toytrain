@@ -68,16 +68,6 @@ function onMovingSnap(evt) {
             const snaps2 = snapsFor(item2)
             snaps.forEach(snap => {
                 snaps2.forEach(snap2 => {
-                    // const dot = new fabric.Circle({
-                    //     radius: 5,
-                    //     fill: 'red',
-                    //     left: snap2.x,
-                    //     top: snap2.y,
-                    //     originX: 'center',
-                    //     originY: 'center',
-                    // })
-                    // canvas.add(dot)
-                    // log('me:', snap.angle, 'you:', snap2.angle)
                     if (snapsMatch(snap, snap2)) {
                         const d = dist(snap, snap2)
                         // log('d:', d)
@@ -164,6 +154,8 @@ function segmentsFor(item) {
     const W = 45 // track width
     const bx = W / 2 * sin(45)
     const by = W / 2 * cos(45)
+    const x1s = item.switched ? -width / 4 : -width / 2 // switches only
+
     function rawSegments() {
         switch (widget) {
             case STRAIGHT:
@@ -176,12 +168,13 @@ function segmentsFor(item) {
                 break
             case SWITCH_LEFT:
                 return [{
-                    x1: -width / 2, y1: height / 2 - W / 2,
+                    x1: x1s, y1: height / 2 - W / 2,
                     x2: width / 2 - bx, y2: height / 2 - W / 2
                 }]
             case SWITCH_RIGHT:
+                if (item.switched) { return [] }
                 return [{
-                    x1: -width / 2, y1: -height / 2 + W / 2,
+                    x1: x1s, y1: -height / 2 + W / 2,
                     x2: width / 2 - bx, y2: -height / 2 + W / 2
                 }]
             default:
@@ -265,15 +258,34 @@ function projectOnSeg(pt, seg, extend) {
 }
 
 function eachTrack(fn) {
-    eachObject(item => {
-        if (item.widget !== ENGINE &&
-            item.widget !== BOXCAR &&
-            item.widget !== BOXCAR2 &&
-            item.widget !== CABOOSE &&
-            item.widget !== TREE) {
-            fn(item)
-        }
-    })
+    allObjects(item =>
+        item.widget === STRAIGHT ||
+        item.widget === CURVE ||
+        item.widget === SWITCH_LEFT ||
+        item.widget === SWITCH_RIGHT ||
+        item.widget === CROSSING
+    ).forEach(fn)
+}
+
+function eachSwitch(fn) {
+    allObjects(item =>
+        item.widget === SWITCH_LEFT ||
+        item.widget === SWITCH_RIGHT
+    ).forEach(fn)
+}
+
+function eachEngine(fn) {
+    allObjects(item =>
+        item.widget === ENGINE
+    ).forEach(fn)
+}
+
+function eachCar(fn) {
+    allObjects(item =>
+        item.widget === BOXCAR ||
+        item.widget === BOXCAR2 ||
+        item.widget === CABOOSE
+    ).forEach(fn)
 }
 
 function angle(phi) {
@@ -289,22 +301,11 @@ function angleDiff(a, b) {
 
 const MIN_INCIDENT = 35
 
-function makeDot(params) {
-    canvas.add(new fabric.Circle({
-        fill: 'red',
-        radius: 5,
-        originX: 'center',
-        originY: 'center',
-        ...params
-    }))
-}
-
 
 function getTrackSnap(car) {
     let minPt = null, minAngle = null, minDist = 35 // don't snap past a certain distance
     eachTrack(track => {
-        const segments = segmentsFor(track)
-        segments.forEach(seg => {
+        segmentsFor(track).forEach(seg => {
             const segAngle = 180 * Math.atan2(seg.y2 - seg.y1, seg.x2 - seg.x1) / Math.PI
             const segAngle2 = 180 + segAngle
             const fwd = angleDiff(car.angle, segAngle) < MIN_INCIDENT
@@ -323,8 +324,7 @@ function getTrackSnap(car) {
         })
 
 
-        const arcs = arcsFor(track)
-        arcs.forEach(arc => {
+        arcsFor(track).forEach(arc => {
             // see how far we are from the point
             const dc = dist(car, arc)
             const d = Math.abs(dc - arc.radius)
@@ -355,15 +355,12 @@ function getTrackSnap(car) {
 function closestCar(pt, radius) {
     // look at all cars, find one 180º behind me
     let minCar = null, minDist = radius
-    allObjects(item => {
+    eachCar(item => {
         if (!item.marked) {
-            const { widget } = item
-            if (widget === BOXCAR || widget === BOXCAR2 || widget === CABOOSE) {
-                const d = dist(item, pt)
-                if (d < minDist && angleDiff(pt.angle, item.angle) <= 45) {
-                    minCar = item
-                    minDist = d
-                }
+            const d = dist(item, pt)
+            if (d < minDist && angleDiff(pt.angle, item.angle) <= 45) {
+                minCar = item
+                minDist = d
             }
         }
     })
@@ -373,18 +370,21 @@ function closestCar(pt, radius) {
 
 // just straight lines at first FIXME
 function onMovingEngine(evt) {
-    if (velocity === 0) { return }
 
     // TODO use ticks
     const { engine, ticks } = evt
-    let trail = engine.antTrail = engine.antTrail || []
+    const v = typeof engine.velocity === 'number' ? engine.velocity : velocity
+
+    if (v === 0) { return }
+
+    let trail = engine.trail = engine.trail || []
     trail.push({ x: engine.left, y: engine.top, angle: engine.angle })
     while (dist(engine, trail[0]) > engine.width) {
         trail.shift()
     }
 
-    engine.left += velocity * cos(engine.angle)
-    engine.top += velocity * sin(engine.angle)
+    engine.left += v * cos(engine.angle)
+    engine.top += v * sin(engine.angle)
 
     let { minPt, minAngle } = getTrackSnap(engine)
     if (minPt && minPt.u >= 0 && minPt.u <= 1) {
@@ -400,7 +400,7 @@ function onMovingEngine(evt) {
     let { width } = leadCar
     let sixOClock = trail[0]
     // log(sixOClock, width)
-    makeDot({ left: sixOClock.x, top: sixOClock.y })
+    // makeDot({ left: sixOClock.x, top: sixOClock.y })
     let tailCar = closestCar(sixOClock, width)
     while (tailCar) {
         // put car on my ant trail 
@@ -424,12 +424,14 @@ function onMovingEngine(evt) {
         // next
         leadCar = tailCar
         width = leadCar.width
-        trail = leadCar.antTrail = leadCar.antTrail || []
+        trail = leadCar.trail = leadCar.trail || []
         trail.push({ x: leadCar.left, y: leadCar.top, angle: leadCar.angle })
         while (dist(leadCar, trail[0]) > engine.width) {
             trail.shift()
         }
         sixOClock = trail[0]
+        // log(sixOClock, width)
+        // makeDot({ left: sixOClock.x, top: sixOClock.y })
         tailCar = closestCar(sixOClock, width)
     }
 }

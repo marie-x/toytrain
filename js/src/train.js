@@ -27,6 +27,8 @@ function onRotated(evt) {
 
 }
 
+const js = JSON.stringify
+
 let crosshair
 let cmdKey, shiftKey, spaceKey
 let mouseDownPoint, mouseDownCanvasOffset
@@ -45,8 +47,12 @@ function metaDown() {
 }
 
 function onMouseMove(evt) {
-    lastMouseMove = evt.e
-    crosshair = evt.pointer
+    const pt = canvas.getPointer(evt.e)
+    crosshair = lastMouseMove = pt
+
+    $('#msg').text(js(lastMouseMove))
+
+    // makeDot(pt)
     const { metaKey, shiftKey } = evt.e
 
     // scroll the screen around
@@ -234,10 +240,23 @@ $(document).ready(async () => {
     renderAll()
 })
 
+function setVelocity(v) {
+    velocity = v // FIXME individual trains
+    const selection = activeObject()
+    if (selection) {
+        if (selection.widget === ENGINE) {
+            engine.velocity = v
+            return
+        }
+    }
+    velocity = v
+}
+
 let velocity = 0.0
 let { now } = Date
 let lastTick = now()
 
+// 30 fps
 function tick() {
     eachObject(item => {
         if (item.type === 'circle') {
@@ -245,12 +264,54 @@ function tick() {
         }
         delete item.marked
     })
+    eachSwitch(item => {
+        const snaps = snapsFor(item)
+        makeDot({ fill: 'brown', ...(item.switched ? snaps[2] : snaps[1]) })
+    })
     sortByLayer()
     // move trains
     const currentTick = now()
-    allObjects(item => item.widget === ENGINE).forEach(engine => onMovingEngine({ engine, ticks: currentTick - lastTick }))
+    eachEngine(engine => onMovingEngine({ engine, ticks: currentTick - lastTick }))
     lastTick = currentTick
     renderAll()
 }
 
+// 1 fps
+function tock() {
+    // toggle switch whenever a train goes by
+    eachSwitch(swatch => {
+        let minDist = swatch.height, minEngine = null
+        eachEngine(engine => {
+            if (dist(swatch, engine) < minDist) {
+                minEngine = engine
+            }
+        })
+        if (minEngine != swatch.minEngine) {
+            if (minEngine === null) {
+                swatch.switched = !swatch.switched
+            }
+            swatch.minEngine = minEngine
+        }
+    })
+}
+
 setInterval(tick, Math.round(1000 / 30))
+setInterval(tock, 1000)
+
+// why no workee waah
+function addTouchHandlers(name) {
+    function onTouchStart(evt) { log('1') }
+    function onTouchMove(evt) { log('2') }
+    function onTouchCancel(evt) { log('3') }
+    function onTouchEnd(evt) { log('4') }
+
+    // Install event handlers for the given element
+    const el = document.getElementById(name)
+    el.addEventListener('touchstart', onTouchStart, false)
+    el.addEventListener('touchend', onTouchMove, false)
+    el.addEventListener('touchcancel', onTouchCancel, false)
+    el.addEventListener('touchmove', onTouchEnd, false)
+}
+
+addTouchHandlers('c3')
+addTouchHandlers('c3-container')

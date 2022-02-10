@@ -15,7 +15,7 @@
 // TODO undo/redo
 // TODO database
 
-const EXTRAS = ['widget', 'layer', 'sublayer', 'id', 'originX', 'originY']
+const EXTRAS = ['widget', 'layer', 'sublayer', 'id', 'originX', 'originY', 'trail', 'velocity', 'switched']
 
 function save() {
     log('save')

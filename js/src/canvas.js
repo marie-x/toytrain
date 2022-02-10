@@ -152,8 +152,33 @@ function activeGroup() {
     return undefined
 }
 
-function setActiveObject(item) {
+const findById = (function () {
 
+    const _idCache = new Map()
+
+    function _findById(id) {
+        if (id) {
+            const val = _idCache.get(id)
+            if (val) {
+                return val
+            }
+            const val2 = allObjects().find(item => item.id === id)
+            _idCache.set(id, val2)
+            return val2
+        }
+        return undefined
+    }
+
+    return _findById
+})()
+
+
+function setActiveObject(item) {
+    if (typeof item === 'string') {
+        item = findById(item)
+    }
+    item && canvas.setActiveObject(item)
+    return item
 }
 
 function nextAngle(item, direction) {
@@ -393,6 +418,18 @@ function zoomToRect(rect, ratio) {
     const panY = -canvas.height * 0.5 + ratio * center.y
     canvas.absolutePan(new fabric.Point(panX, panY))
     renderAll('_zoomToRect')
+}
+
+function makeDot(params) {
+    return canvas.add(new fabric.Circle({
+        left: params.x || 0,
+        top: params.y || 0,
+        fill: 'red',
+        radius: 5,
+        originX: 'center',
+        originY: 'center',
+        ...params
+    }))
 }
 
 $(document).ready(() => {
