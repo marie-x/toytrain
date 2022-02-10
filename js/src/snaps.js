@@ -41,28 +41,13 @@ function snapsMatch(snap, snap2) {
     return Math.abs((snap.angle - snap2.angle + 180 + 360) % 360) < 5
 }
 
-function onMovingSnap(evt) {
-    // remove all circles
-    eachObject(item => {
-        if (item.type === 'circle') {
-            canvas.remove(item)
-        }
-    })
-
-    const { target: item } = evt
+function snapItem(item, minSnapDist = 20) {
+    // log('snap', item, minSnapDist)
     const snaps = snapsFor(item)
     snaps.forEach(snap => {
-        const dot = new fabric.Circle({
-            radius: 5,
-            fill: 'blue',
-            left: snap.x,
-            top: snap.y,
-            originX: 'center',
-            originY: 'center',
-        })
-        canvas.add(dot)
+        makeDot({ fill: 'brown', left: snap.x, top: snap.y })
     })
-    let minSnap = null, minSnap2 = null, minSnapDist = 20 // don't snap past a certain distance
+    let minSnap = null, minSnap2 = null // don't snap past a certain distance
     eachObject(item2 => {
         if (item.id !== item2.id) {
             const snaps2 = snapsFor(item2)
@@ -86,6 +71,18 @@ function onMovingSnap(evt) {
         item.left += minSnap2.x - minSnap.x
         item.top += minSnap2.y - minSnap.y
     }
+}
+
+function onMovingSnap(evt) {
+    // remove all circles
+    eachObject(item => {
+        if (item.type === 'circle') {
+            canvas.remove(item)
+        }
+    })
+
+    const { target: item } = evt
+    snapItem(item)
 }
 
 $(document).ready(() => {
@@ -410,16 +407,17 @@ function onMovingEngine(evt) {
         tailCar.marked = true // little sleazy FIXME
 
         // snap
-        let { minPt, minAngle } = getTrackSnap(tailCar)
-        if (minPt) {
-            tailCar.left = minPt.x
-            tailCar.top = minPt.y
-            // FIXME address weird snap-jumps
-            if (Math.abs(tailCar.angle, minAngle) < 3) {
-                tailCar.angle = minAngle
-            }
-            tailCar.setCoords()
-        }
+        // let { minPt, minAngle } = getTrackSnap(tailCar)
+        // if (minPt) {
+        //     tailCar.left = minPt.x
+        //     tailCar.top = minPt.y
+        //     // FIXME address weird snap-jumps
+        //     if (Math.abs(tailCar.angle, minAngle) < 3) {
+        //         tailCar.angle = minAngle
+        //     }
+        // }
+
+        tailCar.setCoords()
 
         // next
         leadCar = tailCar

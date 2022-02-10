@@ -166,7 +166,7 @@ $(document).ready(() => {
                 break
             case 67: // C
                 if (cmd) {
-                    _keyCopy(evt)
+                    keyCopy(evt)
                 } else {
                     tryVerb('addCurve', evt)
                 }
@@ -204,6 +204,10 @@ $(document).ready(() => {
                 break
             case 85: // U
             case 86: // V
+                if (cmd) {
+                    keyPaste(evt)
+                }
+                break
             case 87: // W
                 if (active) {
                     if (active.widget === SWITCH_LEFT || active.widget === SWITCH_RIGHT) {
@@ -213,7 +217,7 @@ $(document).ready(() => {
                 break
             case 88: // X
                 if (cmd) {
-                    _keyCut(evt)
+                    keyCut(evt)
                 } else {
                     tryVerb('addCrossing', evt)
                 }

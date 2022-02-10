@@ -6,9 +6,7 @@
 // - smoke puffs
 // - sounds
 // - physics should use clock time not tick interval
-// - make sure switches work
-// - some sort of indication of switched/not-switched
-// - some way to toggle switched/not-switched
+// - half-curves and 0.707 straights
 // - selected group should still have snap points
 // - add track doesn't drop item under mouse
 // - add track should be smarter about extending from current selection
@@ -35,10 +33,7 @@ let mouseDownPoint, mouseDownCanvasOffset
 
 function metaDown() {
     canvas.defaultCursor = 'all-scroll'
-    mouseDownPoint = {
-        x: lastMouseMove.screenX,
-        y: lastMouseMove.screenY
-    }
+    mouseDownPoint = { ...lastMouseMove } // shallow copy
     mouseDownCanvasOffset = {
         x: -canvas.viewportTransform[4],
         y: -canvas.viewportTransform[5]
@@ -48,27 +43,28 @@ function metaDown() {
 
 function onMouseMove(evt) {
     const pt = canvas.getPointer(evt.e)
-    crosshair = lastMouseMove = pt
+    if (isNaN(pt.x) || isNaN(pt.y)) {
+        return
+    }
+    crosshair = pt
+    lastMouseMove = { x: evt.e.screenX, y: evt.e.screenY }
 
-    $('#msg').text(js(lastMouseMove))
+    $('#msg').text(js(crosshair))
 
-    // makeDot(pt)
     const { metaKey, shiftKey } = evt.e
 
     // scroll the screen around
     if (metaKey && mouseDownPoint) {
-        const dx = mouseDownPoint.x - lastMouseMove.screenX
-        const dy = mouseDownPoint.y - lastMouseMove.screenY
-
         // FIXME stinky global
         if (!shiftKey) {
+            const dx = mouseDownPoint.x - lastMouseMove.x
+            const dy = mouseDownPoint.y - lastMouseMove.y
             canvas.absolutePan({
                 x: dx + mouseDownCanvasOffset.x,
                 y: dy + mouseDownCanvasOffset.y,
             })
         } else {
-            mouseDownPoint.x = lastMouseMove.screenX
-            mouseDownPoint.y = lastMouseMove.screenY
+            mouseDownPoint = { ...lastMouseMove }
         }
     }
     renderAll('_onMouseMove')
@@ -187,8 +183,27 @@ addVerb('addTree', evt => {
     return addWidget(evt, TREE)
 })
 
-addVerb('addCurve', evt => {
-    return addWidget(evt, CURVE)
+function closestTrack(pt, minDist = 200) {
+    let closest = null
+    eachTrack(track => {
+        const d = dist(track, pt)
+        if (d < minDist) {
+            minDist = d
+            closest = track
+        }
+    })
+    return closest
+}
+
+addVerb('addCurve', async evt => {
+    const closest = closestTrack(atCrosshair(evt))
+    const curve = await addWidget(evt, CURVE)
+    if (closest) {
+        curve.angle = angle(closest.angle + 45)
+        snapItem(curve, 200)
+    } else {
+        log('wamp')
+    }
 })
 
 addVerb('addLeft', evt => {
@@ -199,8 +214,15 @@ addVerb('addRight', evt => {
     return addWidget(evt, SWITCH_RIGHT)
 })
 
-addVerb('addStraight', evt => {
-    return addWidget(evt, STRAIGHT)
+addVerb('addStraight', async evt => {
+    const closest = closestTrack(atCrosshair(evt))
+    const straight = await addWidget(evt, STRAIGHT)
+    if (closest) {
+        straight.angle = closest.angle
+        snapItem(straight, 200)
+    } else {
+        log('womp')
+    }
 })
 
 addVerb('addEngine', evt => {
@@ -266,7 +288,7 @@ function tick() {
     })
     eachSwitch(item => {
         const snaps = snapsFor(item)
-        makeDot({ fill: 'brown', ...(item.switched ? snaps[2] : snaps[1]) })
+        makeDot({ fill: 'rgba(165,42,42,0.5)', ...(item.switched ? snaps[2] : snaps[1]) })
     })
     sortByLayer()
     // move trains
@@ -274,13 +296,14 @@ function tick() {
     eachEngine(engine => onMovingEngine({ engine, ticks: currentTick - lastTick }))
     lastTick = currentTick
     renderAll()
+    setTimeout(tick, Math.round(1000 / 30))
 }
 
 // 1 fps
 function tock() {
     // toggle switch whenever a train goes by
     eachSwitch(swatch => {
-        let minDist = swatch.height, minEngine = null
+        let minDist = swatch.width, minEngine = null
         eachEngine(engine => {
             if (dist(swatch, engine) < minDist) {
                 minEngine = engine
@@ -293,10 +316,11 @@ function tock() {
             swatch.minEngine = minEngine
         }
     })
+    setTimeout(tock, 1000)
 }
 
-setInterval(tick, Math.round(1000 / 30))
-setInterval(tock, 1000)
+setTimeout(tick, Math.round(1000 / 30))
+setTimeout(tock, 1000)
 
 // why no workee waah
 function addTouchHandlers(name) {
