@@ -5,13 +5,13 @@
 // - undo/redo
 // - smoke puffs
 // - sounds
+// - rivers
+// - bridges
 // - physics should use clock time not tick interval
 // - half-curves and 0.707 straights
 // - selected group should still have snap points
 // - add track doesn't drop item under mouse
 // - add track should be smarter about extending from current selection
-// - add boxcars
-// - add hookup between boxcars so that they can be pulled
 
 
 function onMoving(evt) {
@@ -263,18 +263,16 @@ $(document).ready(async () => {
 })
 
 function setVelocity(v) {
-    velocity = v // FIXME individual trains
     const selection = activeObject()
     if (selection) {
         if (selection.widget === ENGINE) {
-            engine.velocity = v
+            selection.velocity = v
             return
         }
     }
-    velocity = v
+    eachEngine(engine => engine.velocity = v)
 }
 
-let velocity = 0.0
 let { now } = Date
 let lastTick = now()
 

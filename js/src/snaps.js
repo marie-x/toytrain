@@ -370,7 +370,7 @@ function onMovingEngine(evt) {
 
     // TODO use ticks
     const { engine, ticks } = evt
-    const v = typeof engine.velocity === 'number' ? engine.velocity : velocity
+    const v = engine.velocity || 0
 
     if (v === 0) { return }
 

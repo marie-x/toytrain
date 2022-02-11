@@ -50,7 +50,7 @@ async function keyCopy(evt) {
     return new Promise((resolve, reject) => {
         const active = activeObject()
         if (active) {
-            pasteCenter = _globalCenter(active)
+            pasteCenter = globalCenter(active)
             // TODO copy the dupOne code
             dupOne(active, {
                 doNotAdd: true,
@@ -64,7 +64,7 @@ async function keyCopy(evt) {
         } else {
             const group = activeGroup()
             if (group) {
-                pasteCenter = _globalCenter(group)
+                pasteCenter = globalCenter(group)
                 const items = group.getObjects().slice()
                 discardActiveObject()
                 for (const item of items) {

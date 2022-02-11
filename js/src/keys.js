@@ -99,32 +99,35 @@ $(document).ready(() => {
                 break
             case 37: // left
                 if (!shift && !alt) {
-                    pan(-2 * STEP, 0)
-                } else if (active && shift && !alt) {
-                    rotate(active, -1)
-                } else if (active && alt) {
-                    if (!active.lockMovementX) {
+                    if (active) {
                         move(active, -STEP, 0)
                     }
+                    else {
+                        pan(-2 * STEP, 0)
+                    }
+                } else if (active && shift && !alt) {
+                    rotate(active, -1)
                 }
                 break
             case 39: // right
                 if (!shift && !alt) {
-                    pan(2 * STEP, 0)
-                } else if (active && shift && !alt) {
-                    rotate(active, 1)
-                } else if (active && alt) {
-                    if (!active.lockMovementX) {
+                    if (active) {
                         move(active, STEP, 0)
                     }
+                    else {
+                        pan(2 * STEP, 0)
+                    }
+                } else if (active && shift && !alt) {
+                    rotate(active, 1)
                 }
                 break
             case 38: // up
                 if (!shift && !alt) {
-                    pan(0, -2 * STEP)
-                } else if (active) {
-                    if (!active.lockMovementY) {
+                    if (active) {
                         move(active, 0, -STEP)
+                    }
+                    else {
+                        pan(0, -2 * STEP)
                     }
                 }
                 break

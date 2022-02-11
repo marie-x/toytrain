@@ -248,17 +248,49 @@ function onMoved(item) {
     save()
 }
 
+// copes with things belonging in groups
+function globalCenter(item, left = 'x', top = 'y') {
+    if (!item.hasOwnProperty('left') && !item.hasOwnProperty('top')) {
+        left = 'left'
+        top = 'top'
+    }
+    const cc = {}
+    if (!item.getCenterPoint) {
+        cc[left] = item.left
+        cc[top] = item.top
+    } else {
+        const c = item.getCenterPoint()
+        if (item.group) {
+            const gc = item.group.getCenterPoint()
+            const ga = item.group.angle * DEG
+            const cx = c.x
+            const cy = c.y
+            c.x = gc.x + cx * Math.cos(ga) - cy * Math.sin(ga)
+            c.y = gc.y + cy * Math.cos(ga) + cx * Math.sin(ga)
+        }
+        cc[left] = c.x
+        cc[top] = c.y
+    }
+    for (const [key, val] of Object.entries(cc)) {
+        if (isNaN(val)) {
+            debugger;
+        }
+    }
+    return cc
+}
+
+
 function move(active, dx, dy) {
     if (active.type === 'activeSelection') {
-        _moveTo(active, active.left + dx, active.top + dy)
+        moveTo(active, active.left + dx, active.top + dy)
         for (const item of active.getObjects()) {
-            item.drag = _globalCenter(item)
+            item.drag = globalCenter(item)
             // _parentMoved(item, dx, dy)
         }
     } else {
-        active.drag = _globalCenter(active)
+        active.drag = globalCenter(active)
         // FIXME why are the 'round' calls here?
-        _moveTo(active, Math.round(active.left + dx), Math.round(active.top + dy))
+        moveTo(active, Math.round(active.left + dx), Math.round(active.top + dy))
         // _itemMoved(active)
     }
 
