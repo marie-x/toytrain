@@ -1,7 +1,6 @@
 // train.js
 
 // TODO:
-// - add velocity to each engine
 // - undo/redo
 // - smoke puffs
 // - sounds
@@ -95,6 +94,7 @@ canvas.on({
 const ENGINE = 'engine'
 const TREE = 'tree'
 const STRAIGHT = 'straight'
+const STRAIGHT2 = 'straight2'
 const SWITCH_LEFT = 'switch-left'
 const SWITCH_RIGHT = 'switch-right'
 const CURVE = 'curve'
@@ -109,6 +109,9 @@ const art = {
     },
     [STRAIGHT]: {
         path: 'straight-f.png'
+    },
+    [STRAIGHT2]: {
+        path: 'straight-2-f.png'
     },
     [SWITCH_LEFT]: {
         path: 'switch-left-f.png'
@@ -214,9 +217,30 @@ addVerb('addRight', evt => {
     return addWidget(evt, SWITCH_RIGHT)
 })
 
+addVerb('duplicate', async evt => {
+    const active = activeObject()
+    if (active && active.widget) {
+        const clone = await addWidget(evt, active.widget)
+        clone.angle = active.angle
+        return clone
+    }
+    return null
+})
+
 addVerb('addStraight', async evt => {
     const closest = closestTrack(atCrosshair(evt))
     const straight = await addWidget(evt, STRAIGHT)
+    if (closest) {
+        straight.angle = closest.angle
+        snapItem(straight, 200)
+    } else {
+        log('womp')
+    }
+})
+
+addVerb('addStraight2', async evt => {
+    const closest = closestTrack(atCrosshair(evt))
+    const straight = await addWidget(evt, STRAIGHT2)
     if (closest) {
         straight.angle = closest.angle
         snapItem(straight, 200)

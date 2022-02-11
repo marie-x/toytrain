@@ -177,28 +177,28 @@ $(document).ready(() => {
                 }
                 break
             case 68: // D
-                tryVerb('addBoxcar2', evt)
+                tryVerb('duplicate', evt)
                 break
             case 69: // E
                 tryVerb('addEngine', evt)
                 break
             case 70: // F
+                tryVerb('addBoxcar2', evt)
             case 71: // G
             case 72: // H
             case 73: // I
             case 74: // J
+                break
             case 75: // K
+                tryVerb('addStraight2', evt)
                 break
             case 76: // L
                 tryVerb('addLeft', evt)
                 break
             case 80: // P
-                if (cmd) {
-                    evt.preventDefault()
-                    _keyPaste(evt)
-                }
                 break
             case 81: // Q
+                break
             case 82: // R
                 tryVerb('addRight', evt)
                 break

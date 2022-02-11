@@ -102,6 +102,7 @@ function snapsFor(item) {
     function rawSnaps() {
         switch (widget) {
             case STRAIGHT:
+            case STRAIGHT2:
                 return [
                     { x: -width / 2, y: 0 },
                     { x: width / 2, y: 0 }
@@ -156,6 +157,7 @@ function segmentsFor(item) {
     function rawSegments() {
         switch (widget) {
             case STRAIGHT:
+            case STRAIGHT2:
                 return [{ x1: -width / 2, y1: 0, x2: width / 2, y2: 0 }]
             case CROSSING:
                 return [
@@ -257,6 +259,7 @@ function projectOnSeg(pt, seg, extend) {
 function eachTrack(fn) {
     allObjects(item =>
         item.widget === STRAIGHT ||
+        item.widget === STRAIGHT2 ||
         item.widget === CURVE ||
         item.widget === SWITCH_LEFT ||
         item.widget === SWITCH_RIGHT ||
