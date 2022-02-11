@@ -12,7 +12,7 @@ const trainExample = {
             "height": 105,
             "widget": "curve",
             "id": "5a6a8789",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -28,7 +28,7 @@ const trainExample = {
             "angle": 270,
             "widget": "tree",
             "id": "fd8dfce8",
-            "src": "file:///Users/max/toytrain/js/art/tree-f.png",
+            "src": "art/tree-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -44,7 +44,7 @@ const trainExample = {
             "angle": 90,
             "widget": "tree",
             "id": "e2123ddf",
-            "src": "file:///Users/max/toytrain/js/art/tree-f.png",
+            "src": "art/tree-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -60,7 +60,7 @@ const trainExample = {
             "angle": -45,
             "widget": "curve",
             "id": "ffcefbdf",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -76,7 +76,7 @@ const trainExample = {
             "angle": -90,
             "widget": "curve",
             "id": "0c42ac7e",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -92,7 +92,7 @@ const trainExample = {
             "angle": -135,
             "widget": "curve",
             "id": "dcbcc806",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -108,7 +108,7 @@ const trainExample = {
             "angle": 135,
             "widget": "curve",
             "id": "59a20f1d",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -124,7 +124,7 @@ const trainExample = {
             "angle": 135,
             "widget": "curve",
             "id": "89ed44f2",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -140,7 +140,7 @@ const trainExample = {
             "angle": 45,
             "widget": "curve",
             "id": "56bf4983",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -156,7 +156,7 @@ const trainExample = {
             "angle": 45,
             "widget": "curve",
             "id": "b3c86732",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -172,7 +172,7 @@ const trainExample = {
             "angle": -45,
             "widget": "straight",
             "id": "a6b29616",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -188,7 +188,7 @@ const trainExample = {
             "angle": 45,
             "widget": "straight",
             "id": "206ba326",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -204,7 +204,7 @@ const trainExample = {
             "angle": 45,
             "widget": "straight",
             "id": "bce966a7",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -220,7 +220,7 @@ const trainExample = {
             "angle": -45,
             "widget": "straight",
             "id": "f79dbf30",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -235,7 +235,7 @@ const trainExample = {
             "height": 105,
             "widget": "curve",
             "id": "54299829",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -251,7 +251,7 @@ const trainExample = {
             "angle": 180,
             "widget": "curve",
             "id": "3be8405c",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -267,7 +267,7 @@ const trainExample = {
             "angle": 90,
             "widget": "curve",
             "id": "670aba24",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -282,7 +282,7 @@ const trainExample = {
             "height": 105,
             "widget": "curve",
             "id": "3b46d2b8",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -298,7 +298,7 @@ const trainExample = {
             "angle": -45,
             "widget": "curve",
             "id": "923bd090",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -314,7 +314,7 @@ const trainExample = {
             "angle": -90,
             "widget": "curve",
             "id": "8f4be7bd",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -329,7 +329,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "a2d92a71",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -344,7 +344,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "9443093d",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -360,7 +360,7 @@ const trainExample = {
             "widget": "switch-right",
             "id": "7f94e026",
             "switched": true,
-            "src": "file:///Users/max/toytrain/js/art/switch-right-f.png",
+            "src": "art/switch-right-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -377,7 +377,7 @@ const trainExample = {
             "widget": "switch-left",
             "id": "60c5610a",
             "switched": false,
-            "src": "file:///Users/max/toytrain/js/art/switch-left-f.png",
+            "src": "art/switch-left-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -393,7 +393,7 @@ const trainExample = {
             "angle": 180,
             "widget": "curve",
             "id": "b8148b02",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -409,7 +409,7 @@ const trainExample = {
             "angle": 180,
             "widget": "curve",
             "id": "6dff3826",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -425,7 +425,7 @@ const trainExample = {
             "angle": 180,
             "widget": "curve",
             "id": "53e17014",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -440,7 +440,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "a521159c",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -456,7 +456,7 @@ const trainExample = {
             "angle": 135,
             "widget": "curve",
             "id": "78d5a5aa",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -472,7 +472,7 @@ const trainExample = {
             "angle": 90,
             "widget": "curve",
             "id": "3181acd2",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -488,7 +488,7 @@ const trainExample = {
             "angle": 45,
             "widget": "curve",
             "id": "3467ad77",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -503,7 +503,7 @@ const trainExample = {
             "height": 105,
             "widget": "curve",
             "id": "3f0fa055",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -519,7 +519,7 @@ const trainExample = {
             "angle": -45,
             "widget": "curve",
             "id": "90ea7349",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -534,7 +534,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "ca37b600",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -550,7 +550,7 @@ const trainExample = {
             "angle": -90,
             "widget": "straight",
             "id": "95d641d9",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -566,7 +566,7 @@ const trainExample = {
             "angle": -45,
             "widget": "straight",
             "id": "35030da8",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -581,7 +581,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "ca521f29",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -596,7 +596,7 @@ const trainExample = {
             "height": 104,
             "widget": "tree",
             "id": "bd5811d5",
-            "src": "file:///Users/max/toytrain/js/art/tree-f.png",
+            "src": "art/tree-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -612,7 +612,7 @@ const trainExample = {
             "angle": -45,
             "widget": "straight",
             "id": "44fc67d7",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -629,7 +629,7 @@ const trainExample = {
             "widget": "switch-right",
             "id": "dea8f04b",
             "switched": false,
-            "src": "file:///Users/max/toytrain/js/art/switch-right-f.png",
+            "src": "art/switch-right-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -645,7 +645,7 @@ const trainExample = {
             "widget": "switch-left",
             "id": "69bbe60f",
             "switched": true,
-            "src": "file:///Users/max/toytrain/js/art/switch-left-f.png",
+            "src": "art/switch-left-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -661,7 +661,7 @@ const trainExample = {
             "angle": 45,
             "widget": "straight",
             "id": "0cba5403",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -678,7 +678,7 @@ const trainExample = {
             "widget": "switch-left",
             "id": "6f6f8798",
             "switched": true,
-            "src": "file:///Users/max/toytrain/js/art/switch-left-f.png",
+            "src": "art/switch-left-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -695,7 +695,7 @@ const trainExample = {
             "widget": "switch-left",
             "id": "adb198c6",
             "switched": false,
-            "src": "file:///Users/max/toytrain/js/art/switch-left-f.png",
+            "src": "art/switch-left-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -712,7 +712,7 @@ const trainExample = {
             "widget": "switch-left",
             "id": "d75eac24",
             "switched": true,
-            "src": "file:///Users/max/toytrain/js/art/switch-left-f.png",
+            "src": "art/switch-left-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -728,7 +728,7 @@ const trainExample = {
             "angle": -135,
             "widget": "curve",
             "id": "7b1832c1",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -743,7 +743,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "0fe1e484",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -758,7 +758,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "d9ec457d",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -773,7 +773,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "b9392a82",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -788,7 +788,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "0adf3b9f",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -804,7 +804,7 @@ const trainExample = {
             "widget": "switch-right",
             "id": "51dee330",
             "switched": true,
-            "src": "file:///Users/max/toytrain/js/art/switch-right-f.png",
+            "src": "art/switch-right-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -821,7 +821,7 @@ const trainExample = {
             "widget": "switch-right",
             "id": "110cf003",
             "switched": false,
-            "src": "file:///Users/max/toytrain/js/art/switch-right-f.png",
+            "src": "art/switch-right-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -837,7 +837,7 @@ const trainExample = {
             "angle": -45,
             "widget": "straight",
             "id": "6f49a065",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -853,7 +853,7 @@ const trainExample = {
             "angle": 45,
             "widget": "curve",
             "id": "4218e8b2",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -868,7 +868,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "79cd0d78",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -883,7 +883,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "547bc396",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -898,7 +898,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "aaef2a92",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -913,7 +913,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "c07a2ea1",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -929,7 +929,7 @@ const trainExample = {
             "angle": -45,
             "widget": "straight",
             "id": "02f8adb4",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -945,7 +945,7 @@ const trainExample = {
             "angle": 45,
             "widget": "straight",
             "id": "a52226f0",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -961,7 +961,7 @@ const trainExample = {
             "angle": -135,
             "widget": "curve",
             "id": "cce5f150",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -978,7 +978,7 @@ const trainExample = {
             "widget": "switch-right",
             "id": "02e14868",
             "switched": false,
-            "src": "file:///Users/max/toytrain/js/art/switch-right-f.png",
+            "src": "art/switch-right-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -993,7 +993,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "f1646926",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1010,7 +1010,7 @@ const trainExample = {
             "widget": "switch-left",
             "id": "0485c56f",
             "switched": true,
-            "src": "file:///Users/max/toytrain/js/art/switch-left-f.png",
+            "src": "art/switch-left-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1027,7 +1027,7 @@ const trainExample = {
             "widget": "switch-left",
             "id": "cb57dbab",
             "switched": true,
-            "src": "file:///Users/max/toytrain/js/art/switch-left-f.png",
+            "src": "art/switch-left-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1043,7 +1043,7 @@ const trainExample = {
             "widget": "switch-left",
             "id": "2bd9e235",
             "switched": false,
-            "src": "file:///Users/max/toytrain/js/art/switch-left-f.png",
+            "src": "art/switch-left-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1058,7 +1058,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "4a762db1",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1074,7 +1074,7 @@ const trainExample = {
             "angle": 180,
             "widget": "straight",
             "id": "d8659a13",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1090,7 +1090,7 @@ const trainExample = {
             "angle": 225,
             "widget": "curve",
             "id": "e4ba785d",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1106,7 +1106,7 @@ const trainExample = {
             "angle": 270,
             "widget": "curve",
             "id": "a3b2eaaa",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1121,7 +1121,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "53b31e67",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1136,7 +1136,7 @@ const trainExample = {
             "height": 59,
             "widget": "straight",
             "id": "31f7e7a4",
-            "src": "file:///Users/max/toytrain/js/art/straight-f.png",
+            "src": "art/straight-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1152,7 +1152,7 @@ const trainExample = {
             "widget": "switch-right",
             "id": "6bacd207",
             "switched": true,
-            "src": "file:///Users/max/toytrain/js/art/switch-right-f.png",
+            "src": "art/switch-right-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1168,7 +1168,7 @@ const trainExample = {
             "angle": 315,
             "widget": "curve",
             "id": "87146bac",
-            "src": "file:///Users/max/toytrain/js/art/curve-f.png",
+            "src": "art/curve-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1183,7 +1183,7 @@ const trainExample = {
             "height": 104,
             "widget": "tree",
             "id": "d17e0aee",
-            "src": "file:///Users/max/toytrain/js/art/tree-f.png",
+            "src": "art/tree-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1199,7 +1199,7 @@ const trainExample = {
             "angle": -45,
             "widget": "crossing",
             "id": "f24a87d0",
-            "src": "file:///Users/max/toytrain/js/art/crossing-f.png",
+            "src": "art/crossing-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1214,7 +1214,7 @@ const trainExample = {
             "height": 60,
             "widget": "crossing",
             "id": "a59d313c",
-            "src": "file:///Users/max/toytrain/js/art/crossing-f.png",
+            "src": "art/crossing-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1229,7 +1229,7 @@ const trainExample = {
             "height": 60,
             "widget": "crossing",
             "id": "797bf229",
-            "src": "file:///Users/max/toytrain/js/art/crossing-f.png",
+            "src": "art/crossing-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1244,7 +1244,7 @@ const trainExample = {
             "height": 60,
             "widget": "crossing",
             "id": "d2608402",
-            "src": "file:///Users/max/toytrain/js/art/crossing-f.png",
+            "src": "art/crossing-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1260,7 +1260,7 @@ const trainExample = {
             "angle": 180,
             "widget": "crossing",
             "id": "95595836",
-            "src": "file:///Users/max/toytrain/js/art/crossing-f.png",
+            "src": "art/crossing-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1275,7 +1275,7 @@ const trainExample = {
             "height": 60,
             "widget": "crossing",
             "id": "738de395",
-            "src": "file:///Users/max/toytrain/js/art/crossing-f.png",
+            "src": "art/crossing-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1290,7 +1290,7 @@ const trainExample = {
             "height": 60,
             "widget": "crossing",
             "id": "31f20deb",
-            "src": "file:///Users/max/toytrain/js/art/crossing-f.png",
+            "src": "art/crossing-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1305,7 +1305,7 @@ const trainExample = {
             "height": 60,
             "widget": "crossing",
             "id": "8668d385",
-            "src": "file:///Users/max/toytrain/js/art/crossing-f.png",
+            "src": "art/crossing-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -1668,7 +1668,7 @@ const trainExample = {
                     "angle": 180
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/caboose-f.png",
+            "src": "art/caboose-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -2036,7 +2036,7 @@ const trainExample = {
                     "angle": 90
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/car-blue-f.png",
+            "src": "art/car-blue-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -2404,7 +2404,7 @@ const trainExample = {
                     "angle": 170.47111242445692
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/car-red-f.png",
+            "src": "art/car-red-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -2597,7 +2597,7 @@ const trainExample = {
                     "angle": 135
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/car-blue-f.png",
+            "src": "art/car-blue-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -2965,7 +2965,7 @@ const trainExample = {
                     "angle": 196.29415715348364
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/car-blue-f.png",
+            "src": "art/car-blue-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -3333,7 +3333,7 @@ const trainExample = {
                     "angle": 117.582252346578
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/caboose-f.png",
+            "src": "art/caboose-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -3526,7 +3526,7 @@ const trainExample = {
                     "angle": 159.65065528379205
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/car-red-f.png",
+            "src": "art/car-red-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -3894,7 +3894,7 @@ const trainExample = {
                     "angle": 144.02730087565993
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/car-blue-f.png",
+            "src": "art/car-blue-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -4257,7 +4257,7 @@ const trainExample = {
                     "angle": 180
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/car-blue-f.png",
+            "src": "art/car-blue-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -4280,7 +4280,7 @@ const trainExample = {
                     "angle": 180
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/car-red-f.png",
+            "src": "art/car-red-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -4473,7 +4473,7 @@ const trainExample = {
                     "angle": 180
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/car-blue-f.png",
+            "src": "art/car-blue-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -4666,7 +4666,7 @@ const trainExample = {
                     "angle": 135
                 }
             ],
-            "src": "file:///Users/max/toytrain/js/art/car-red-f.png",
+            "src": "art/car-red-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -5035,7 +5035,7 @@ const trainExample = {
                 }
             ],
             "velocity": 1.5,
-            "src": "file:///Users/max/toytrain/js/art/engine-f.png",
+            "src": "art/engine-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -5229,7 +5229,7 @@ const trainExample = {
                 }
             ],
             "velocity": 3,
-            "src": "file:///Users/max/toytrain/js/art/engine-f.png",
+            "src": "art/engine-f.png",
             "crossOrigin": null,
             "filters": []
         },
@@ -5593,7 +5593,7 @@ const trainExample = {
                 }
             ],
             "velocity": 1.5,
-            "src": "file:///Users/max/toytrain/js/art/engine-f.png",
+            "src": "art/engine-f.png",
             "crossOrigin": null,
             "filters": []
         },
