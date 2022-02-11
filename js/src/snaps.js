@@ -98,6 +98,8 @@ function snapsFor(item) {
     const W = 45 // track width
     const bx = W / 2 * sin(45)
     const by = W / 2 * cos(45)
+    const bx2 = W / 2 * sin(45 / 2)
+    const by2 = W / 2 * cos(45 / 2)
 
     function rawSnaps() {
         switch (widget) {
@@ -123,6 +125,11 @@ function snapsFor(item) {
                 return [
                     { x: -width / 2, y: height / 2 - W / 2, angle: 180 },
                     { x: width / 2 - bx, y: -height / 2 + by, angle: -45 }
+                ]
+            case CURVE2:
+                return [
+                    { x: -width / 2, y: height / 2 - W / 2, angle: 180 },
+                    { x: width / 2 - bx, y: -height / 2 + by, angle: -45 / 2 }
                 ]
             case SWITCH_LEFT:
                 return [
@@ -204,6 +211,8 @@ function arcsFor(item) {
         switch (widget) {
             case CURVE:
                 return [{ x: -width / 2, y: -radius, start: 45, end: 90 }]
+            case CURVE2:
+                return [{ x: -width / 2, y: -radius, start: 45 * 1.5, end: 90 }]
             case SWITCH_LEFT:
                 return [{ x: -width / 2, y: -radius, start: 45, end: 90 }]
             case SWITCH_RIGHT:
@@ -265,6 +274,7 @@ function eachTrack(fn) {
         item.widget === STRAIGHT ||
         item.widget === STRAIGHT2 ||
         item.widget === CURVE ||
+        item.widget === CURVE2 ||
         item.widget === SWITCH_LEFT ||
         item.widget === SWITCH_RIGHT ||
         item.widget === CROSSING

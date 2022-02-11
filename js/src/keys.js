@@ -189,7 +189,10 @@ $(document).ready(() => {
                 tryVerb('addEndpoint', evt)
                 break
             case 72: // H
+                tryVerb('addCurve2', evt)
+                break
             case 73: // I
+                break
             case 74: // J
                 break
             case 75: // K

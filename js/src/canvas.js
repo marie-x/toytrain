@@ -184,9 +184,10 @@ function setActiveObject(item) {
 function nextAngle(item, direction) {
     const legitRulerAngles = [0, 90, 180, 270]
     const legitLightAngles = [0, 45, 90, 135, 180, 225, 270, 315]
-    const legitOtherAngles = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330]
+    const legitOtherAngles = [0, 22.5, 45, (45 + 90) / 2, 90, (90 + 135) / 2, 135,
+        (135 + 180) / 2, 180, (180 + 225) / 2, 225, (225 + 270 / 2), 270, (270 + 315) / 2, 315, (315 + 360) / 2]
 
-    let legitAngles = legitLightAngles
+    let legitAngles = legitOtherAngles
     // if (item.isUnit() || item.isPipe()) {
     //     legitAngles = legitLightAngles
     // } else if (item.isRuler()) {

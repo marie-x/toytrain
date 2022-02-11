@@ -99,6 +99,7 @@ const STRAIGHT2 = 'straight2'
 const SWITCH_LEFT = 'switch-left'
 const SWITCH_RIGHT = 'switch-right'
 const CURVE = 'curve'
+const CURVE2 = 'curve2'
 const CROSSING = 'crossing'
 const BOXCAR = 'boxcar'
 const BOXCAR2 = 'boxcar2'
@@ -123,6 +124,9 @@ const art = {
     },
     [CURVE]: {
         path: 'curve-f.png'
+    },
+    [CURVE2]: {
+        path: 'curve2-f.png'
     },
     [ENGINE]: {
         path: 'engine-f.png'
@@ -209,8 +213,15 @@ addVerb('addCurve', async evt => {
     if (closest) {
         curve.angle = angle(closest.angle + 45)
         snapItem(curve, 200)
-    } else {
-        log('wamp')
+    }
+})
+
+addVerb('addCurve2', async evt => {
+    const closest = closestTrack(atCrosshair(evt))
+    const curve = await addWidget(evt, CURVE2)
+    if (closest) {
+        curve.angle = angle(closest.angle + 45) // FIXME get smarter?
+        snapItem(curve, 200)
     }
 })
 
