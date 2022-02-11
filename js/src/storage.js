@@ -19,16 +19,18 @@ const EXTRAS = ['widget', 'layer', 'sublayer', 'id', 'originX', 'originY', 'trai
 
 function save() {
     log('save')
-    localStorage.setItem('train', JSON.stringify(canvas.toJSON(EXTRAS)))
+    const contents = JSON.stringify(canvas.toJSON(EXTRAS))
+    localStorage.setItem('train', contents)
+    return contents
 }
 
 function rehydrate(item) {
     item.setControlsVisibility(CTRLS_WIDGET)
 }
 
-async function load() {
+async function load(json) {
+    json = json || localStorage.getItem('train')
     return new Promise((resolve, reject) => {
-        const json = localStorage.getItem('train')
         if (json) {
             canvas.loadFromJSON(json, () => {
                 canvas.getObjects().forEach(rehydrate)
@@ -38,6 +40,20 @@ async function load() {
             resolve() // is okay
         }
     })
+}
+
+function readDemo() {
+    load(trainExample)
+    // const url = 'examples/train-snapshot.json'
+
+    // function onComplete(r) {
+    //     log(js(r))
+    // }
+
+    // new fabric.util.request(url, {
+    //     method: 'get',
+    //     onComplete: onComplete
+    // });
 }
 
 let pasteBuffer, pasteGroup
@@ -128,4 +144,11 @@ function keyPaste(evt, shift) {
         setActiveObject(pasteGroup[0])
     }
     keyCopy(evt)
+}
+
+function download(download, data, type = 'text/json') {
+    const blob = new Blob([data], { type })
+    const href = window.URL.createObjectURL(blob)
+    $('<a>').attr({ href, download })[0].click()
+    window.URL.revokeObjectURL(href)
 }

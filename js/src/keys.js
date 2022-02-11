@@ -92,6 +92,7 @@ $(document).ready(() => {
         switch (evt.keyCode) {
             case 8: // delete
             case 46: // backspace
+                evt.preventDefault()
                 tryVerb('remove', evt)
                 break
             case 13: // enter
@@ -169,6 +170,7 @@ $(document).ready(() => {
                 break
             case 67: // C
                 if (cmd) {
+                    evt.preventDefault()
                     keyCopy(evt)
                 } else {
                     tryVerb('addCurve', evt)
@@ -192,6 +194,7 @@ $(document).ready(() => {
                 break
             case 80: // P
                 if (cmd) {
+                    evt.preventDefault()
                     _keyPaste(evt)
                 }
                 break
@@ -200,12 +203,20 @@ $(document).ready(() => {
                 tryVerb('addRight', evt)
                 break
             case 83: // S
-                tryVerb('addStraight', evt)
+                if (cmd) {
+                    evt.preventDefault()
+                    download('train-snapshot.json', save())
+                } else {
+                    tryVerb('addStraight', evt)
+                }
                 break
             case 84: // T
                 tryVerb('addTree', evt)
                 break
             case 85: // U
+                // read default file
+                readDemo()
+                break
             case 86: // V
                 if (cmd) {
                     keyPaste(evt)
@@ -220,6 +231,7 @@ $(document).ready(() => {
                 break
             case 88: // X
                 if (cmd) {
+                    evt.preventDefault()
                     keyCut(evt)
                 } else {
                     tryVerb('addCrossing', evt)

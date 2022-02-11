@@ -246,7 +246,6 @@ addVerb('addCrossing', evt => {
 })
 
 addVerb('remove', (evt) => {
-    evt.preventDefault()
     const items = activeObjects()
     for (const item of items) {
         canvas.remove(item)
