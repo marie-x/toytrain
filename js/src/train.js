@@ -6,12 +6,13 @@
 // - sounds
 // - rivers
 // - bridges
+// - stops
+// - Y-switches
+// - trains should be able to go backwards
 // - physics should use clock time not tick interval
-// - half-curves and 0.707 straights
+// - half-curves
 // - selected group should still have snap points
-// - add track doesn't drop item under mouse
-// - add track should be smarter about extending from current selection
-
+// - selected group should not lose its global position info
 
 function onMoving(evt) {
     const active = activeObject() || activeGroup()
@@ -102,6 +103,7 @@ const CROSSING = 'crossing'
 const BOXCAR = 'boxcar'
 const BOXCAR2 = 'boxcar2'
 const CABOOSE = 'caboose'
+const ENDPOINT = 'endpoint'
 
 const art = {
     [TREE]: {
@@ -136,6 +138,9 @@ const art = {
     },
     [CABOOSE]: {
         path: 'caboose-f.png'
+    },
+    [ENDPOINT]: {
+        path: 'endpoint-f.png'
     }
 }
 
@@ -241,6 +246,17 @@ addVerb('addStraight', async evt => {
 addVerb('addStraight2', async evt => {
     const closest = closestTrack(atCrosshair(evt))
     const straight = await addWidget(evt, STRAIGHT2)
+    if (closest) {
+        straight.angle = closest.angle
+        snapItem(straight, 200)
+    } else {
+        log('womp')
+    }
+})
+
+addVerb('addEndpoint', async evt => {
+    const closest = closestTrack(atCrosshair(evt))
+    const straight = await addWidget(evt, ENDPOINT)
     if (closest) {
         straight.angle = closest.angle
         snapItem(straight, 200)

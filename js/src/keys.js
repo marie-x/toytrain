@@ -184,7 +184,10 @@ $(document).ready(() => {
                 break
             case 70: // F
                 tryVerb('addBoxcar2', evt)
+                break
             case 71: // G
+                tryVerb('addEndpoint', evt)
+                break
             case 72: // H
             case 73: // I
             case 74: // J

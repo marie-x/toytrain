@@ -101,6 +101,10 @@ function snapsFor(item) {
 
     function rawSnaps() {
         switch (widget) {
+            case ENDPOINT:
+                return [
+                    { x: -width / 2, y: 0 }
+                ]
             case STRAIGHT:
             case STRAIGHT2:
                 return [
