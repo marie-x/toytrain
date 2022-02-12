@@ -98,6 +98,14 @@ function eachObject(fn) {
     return canvas.getObjects().forEach(fn)
 }
 
+// TODO make top/left and x/y equivalent
+function centerViewportOn(pt) {
+    const { tr, tl, br } = canvas.vptCoords
+    const width = tr.x - tl.x
+    const height = br.y - tr.y
+    zoomToRect({ left: pt.left - width / 2, top: pt.top - height / 2, width, height })
+}
+
 function zoomToItems(items = canvas.getObjects()) {
     if (items.length === 0) { return }
     let minX = 100000, minY = 100000, maxX = -100000, maxY = -100000

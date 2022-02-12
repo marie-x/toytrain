@@ -204,7 +204,7 @@ function segmentsFor(item) {
 
 // calc centroids and angle ranges
 function arcsFor(item) {
-    const { angle, widget, width, height, left, top } = item
+    const { angle, widget, width, left, top } = item
 
     const radius = 194    // weird geometry constant FIXME
     function rawArcs() {
@@ -212,7 +212,7 @@ function arcsFor(item) {
             case CURVE:
                 return [{ x: -width / 2, y: -radius, start: 45, end: 90 }]
             case CURVE2:
-                return [{ x: -width / 2, y: -radius, start: 45 * 1.5, end: 90 }]
+                return [{ x: -width / 2, y: -radius - 22, start: 45 * 1.5, end: 90 }]
             case SWITCH_LEFT:
                 return [{ x: -width / 2, y: -radius, start: 45, end: 90 }]
             case SWITCH_RIGHT:
@@ -225,8 +225,8 @@ function arcsFor(item) {
         return {
             x: left + cos(angle) * raw.x - sin(angle) * raw.y,
             y: top + sin(angle) * raw.x + cos(angle) * raw.y,
-            start: (angle + raw.start + 360) % 360,
-            end: (angle + raw.end + 360) % 360,
+            start: wrap(angle + raw.start),
+            end: wrap(angle + raw.end),
             radius: radius + 30 // TODO FIXME
         }
     })
@@ -275,6 +275,7 @@ function eachTrack(fn) {
         item.widget === STRAIGHT2 ||
         item.widget === CURVE ||
         item.widget === CURVE2 ||
+        item.widget === ENDPOINT ||
         item.widget === SWITCH_LEFT ||
         item.widget === SWITCH_RIGHT ||
         item.widget === CROSSING
@@ -302,19 +303,17 @@ function eachCar(fn) {
     ).forEach(fn)
 }
 
-function angle(phi) {
+function wrap(phi) {
     return (phi + 360) % 360
 }
 
 function angleDiff(a, b) {
     const c = Math.abs(((a - b + 180) % 360) - 180)
     const d = Math.min(c, 360 - c)
-    // log('ad', a, b, d)
     return d
 }
 
 const MIN_INCIDENT = 35
-
 
 function getTrackSnap(car) {
     let minPt = null, minAngle = null, minDist = 35 // don't snap past a certain distance
@@ -337,15 +336,14 @@ function getTrackSnap(car) {
             }
         })
 
-
         arcsFor(track).forEach(arc => {
             // see how far we are from the point
             const dc = dist(car, arc)
             const d = Math.abs(dc - arc.radius)
             const dd = false // d < 100
-            const angleC = angle(180 + 180 * Math.atan2(arc.y - car.top, arc.x - car.left) / Math.PI)
-            const arcAngle = angle(angleC + 90)
-            const arcAngle2 = angle(angleC - 90)
+            const angleC = wrap(180 + 180 * Math.atan2(arc.y - car.top, arc.x - car.left) / Math.PI)
+            const arcAngle = wrap(angleC + 90)
+            const arcAngle2 = wrap(angleC - 90)
             if (angleC > arc.start && angleC < (arc.end || 360)) {
                 const fwd = angleDiff(car.angle, arcAngle) < MIN_INCIDENT
                 const rev = angleDiff(car.angle, arcAngle2) < MIN_INCIDENT
@@ -370,7 +368,7 @@ function closestCar(pt, radius) {
     // look at all cars, find one 180º behind me
     let minCar = null, minDist = radius
     eachCar(item => {
-        if (!item.marked) {
+        if (!item.following) {
             const d = dist(item, pt)
             if (d < minDist && angleDiff(pt.angle, item.angle) <= 45) {
                 minCar = item
@@ -380,74 +378,5 @@ function closestCar(pt, radius) {
     })
 
     return minCar
-}
-
-// just straight lines at first FIXME
-function onMovingEngine(evt) {
-
-    // TODO use ticks
-    const { engine, ticks } = evt
-    const v = engine.velocity || 0
-
-    if (v === 0) { return }
-
-    let trail = engine.trail = engine.trail || []
-    trail.push({ x: engine.left, y: engine.top, angle: engine.angle })
-    while (dist(engine, trail[0]) > engine.width) {
-        trail.shift()
-    }
-
-    engine.left += v * cos(engine.angle)
-    engine.top += v * sin(engine.angle)
-
-    let { minPt, minAngle } = getTrackSnap(engine)
-    if (minPt && minPt.u >= 0 && minPt.u <= 1) {
-        // log('snap', minPt, minAngle, engine.angle)
-        engine.left = minPt.x
-        engine.top = minPt.y
-        engine.angle = minAngle
-        engine.setCoords()
-    }
-
-    // find a trail of boxcars and caboooooses
-    let leadCar = engine
-    let { width } = leadCar
-    let sixOClock = trail[0]
-    // log(sixOClock, width)
-    // makeDot({ left: sixOClock.x, top: sixOClock.y })
-    let tailCar = closestCar(sixOClock, width)
-    while (tailCar) {
-        // put car on my ant trail 
-        tailCar.left = sixOClock.x
-        tailCar.top = sixOClock.y
-        tailCar.angle = sixOClock.angle
-        tailCar.marked = true // little sleazy FIXME
-
-        // snap
-        // let { minPt, minAngle } = getTrackSnap(tailCar)
-        // if (minPt) {
-        //     tailCar.left = minPt.x
-        //     tailCar.top = minPt.y
-        //     // FIXME address weird snap-jumps
-        //     if (Math.abs(tailCar.angle, minAngle) < 3) {
-        //         tailCar.angle = minAngle
-        //     }
-        // }
-
-        tailCar.setCoords()
-
-        // next
-        leadCar = tailCar
-        width = leadCar.width
-        trail = leadCar.trail = leadCar.trail || []
-        trail.push({ x: leadCar.left, y: leadCar.top, angle: leadCar.angle })
-        while (dist(leadCar, trail[0]) > engine.width) {
-            trail.shift()
-        }
-        sixOClock = trail[0]
-        // log(sixOClock, width)
-        // makeDot({ left: sixOClock.x, top: sixOClock.y })
-        tailCar = closestCar(sixOClock, width)
-    }
 }
 

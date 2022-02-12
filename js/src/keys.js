@@ -199,14 +199,14 @@ $(document).ready(() => {
                 tryVerb('addStraight2', evt)
                 break
             case 76: // L
-                tryVerb('addLeft', evt)
+                tryVerb('addSwitchLeft', evt)
                 break
             case 80: // P
                 break
             case 81: // Q
                 break
             case 82: // R
-                tryVerb('addRight', evt)
+                tryVerb('addSwitchRight', evt)
                 break
             case 83: // S
                 if (cmd) {

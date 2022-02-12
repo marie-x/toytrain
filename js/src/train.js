@@ -7,11 +7,16 @@
 // - moar trees
 // - bridges
 // - Y-switches
+// - boids??
+// - svg clouds
 // - trains should be able to go backwards
 // - physics should use clock time not tick interval
 // - selected group should still have snap points
 // - selected group should not lose its global position info
 // - overtaking train should not steal cars :)
+// - that one switch glitch
+// - load/store gdrive
+// - why do clouds go nuts when i switch away from the tab?
 
 function onMoving(evt) {
     const active = activeObject() || activeGroup()
@@ -37,7 +42,7 @@ function metaDown() {
         x: -canvas.viewportTransform[4],
         y: -canvas.viewportTransform[5]
     }
-    renderAll('_spaceDown')
+    renderAll('metaDown')
 }
 
 function onMouseMove(evt) {
@@ -212,11 +217,12 @@ function sortByLayer() {
             case PUFF:
                 return 4 // above engine but below bridges
             case ENGINE:
-                return 3
+                return 3 // + ((item.numCars || 0) / 1000) // shorter trains to the front of the line
             case BOXCAR:
             case BOXCAR2:
-            case CABOOSE:
                 return 2
+            case CABOOSE:
+                return 1.9 // maybe this will skoot them to the back?
             case CROSSING:
                 return 1
             default:
@@ -239,9 +245,7 @@ async function addWidget(where, widget) {
     const img = await imageFromURL('art/' + path)
     img.widget = widget // FIXME
     img.originX = img.originY = 'center'
-    // img.width = size.width
-    // img.height = size.height
-    img.left = where.left || 0
+    img.left = where.left || 0 // maybe center of canvas viewport would be better
     img.top = where.top || 0
     rehydrate(img)
     addToCanvas(img)
@@ -257,7 +261,7 @@ function closestTrack(pt, minDist = 200) {
     let closest = null
     eachTrack(track => {
         const d = dist(track, pt)
-        if (d < minDist) {
+        if (d < minDist && d > 0) {
             minDist = d
             closest = track
         }
@@ -265,30 +269,30 @@ function closestTrack(pt, minDist = 200) {
     return closest
 }
 
-addVerb('addCurve', async evt => {
-    const closest = closestTrack(atCrosshair(evt))
-    const curve = await addWidget(evt, CURVE)
+function snapClosest(track, theta = 0) {
+    const closest = closestTrack(track)
     if (closest) {
-        curve.angle = angle(closest.angle + 45)
-        snapItem(curve, 200)
+        track.angle = wrap(closest.angle + theta)
+        snapItem(track, 200)
     }
+    return track
+}
+
+addVerb('addCurve', async evt => {
+    return snapClosest(await addWidget(evt, CURVE), 45)
 })
 
 addVerb('addCurve2', async evt => {
-    const closest = closestTrack(atCrosshair(evt))
-    const curve = await addWidget(evt, CURVE2)
-    if (closest) {
-        curve.angle = angle(closest.angle + 45) // FIXME get smarter?
-        snapItem(curve, 200)
-    }
+    return snapClosest(await addWidget(evt, CURVE), 45)
 })
 
-addVerb('addLeft', evt => {
-    return addWidget(evt, SWITCH_LEFT)
+addVerb('addSwitchLeft', async evt => {
+    return snapClosest(await addWidget(evt, SWITCH_LEFT))
 })
 
-addVerb('addRight', evt => {
-    return addWidget(evt, SWITCH_RIGHT)
+addVerb('addSwitchRight', async evt => {
+    // TODO snap?
+    return snapClosest(await addWidget(evt, SWITCH_RIGHT))
 })
 
 addVerb('duplicate', async evt => {
@@ -302,36 +306,15 @@ addVerb('duplicate', async evt => {
 })
 
 addVerb('addStraight', async evt => {
-    const closest = closestTrack(atCrosshair(evt))
-    const straight = await addWidget(evt, STRAIGHT)
-    if (closest) {
-        straight.angle = closest.angle
-        snapItem(straight, 200)
-    } else {
-        log('womp')
-    }
+    return snapClosest(await addWidget(evt, STRAIGHT))
 })
 
 addVerb('addStraight2', async evt => {
-    const closest = closestTrack(atCrosshair(evt))
-    const straight = await addWidget(evt, STRAIGHT2)
-    if (closest) {
-        straight.angle = closest.angle
-        snapItem(straight, 200)
-    } else {
-        log('womp')
-    }
+    return snapClosest(await addWidget(evt, STRAIGHT2))
 })
 
 addVerb('addEndpoint', async evt => {
-    const closest = closestTrack(atCrosshair(evt))
-    const straight = await addWidget(evt, ENDPOINT)
-    if (closest) {
-        straight.angle = closest.angle
-        snapItem(straight, 200)
-    } else {
-        log('womp')
-    }
+    return snapClosest(await addWidget(evt, ENDPOINT))
 })
 
 addVerb('addEngine', evt => {
@@ -364,14 +347,17 @@ addVerb('remove', (evt) => {
 })
 
 function addPuff(engine) {
+    // bunch of little circles randomly arrayed in polar coords
     const elements = Array(20).fill().map((v, i) => {
+        let r = 2 + 10 * Math.random()
+        let theta = 360 * Math.random()
         return new fabric.Circle({
             fill: 'white',
             radius: 7,
             originX: 'center',
             originY: 'center',
-            left: Math.random() * 20 - 10,
-            top: Math.random() * 20 - 10,
+            left: r * cos(theta),
+            top: r * sin(theta),
             opacity: 0.5 + 0.4 * Math.random()
         })
     })
@@ -381,7 +367,6 @@ function addPuff(engine) {
         width: 50,
         height: 50,
         widget: PUFF,
-        ticks: 200,
         selectable: false,
         originX: 'center',
         originY: 'center'
@@ -400,6 +385,88 @@ function setVelocity(v) {
     eachEngine(engine => engine.velocity = v)
 }
 
+// todo use clock
+function fadePuffs() {
+    eachObject(item => {
+        if (item.widget === PUFF) {
+            let maxOpacity = 0
+            item.getObjects().forEach(dot => {
+                dot.fill = `rgba(255,255,255,${dot.opacity})`
+                dot.opacity *= 0.98
+                maxOpacity = Math.max(dot.opacity, maxOpacity)
+                dot.dirty = true
+            })
+            item.dirty = true
+            if (maxOpacity < 0.05) {
+                canvas.remove(item)
+            }
+        }
+    })
+}
+
+// just straight lines at first FIXME
+function onMovingEngine(evt) {
+
+    // TODO use ticks
+    const { engine, ticks } = evt
+    let velocity = engine.velocity || 0
+
+    if (velocity === 0) { return }
+
+    // pulling cars slows you down a little
+    const numCars = engine.numCars || 0
+    velocity -= numCars / 20
+
+    let trail = engine.trail = engine.trail || []
+    trail.push({ x: engine.left, y: engine.top, angle: engine.angle, id: engine.id })
+    while (dist(engine, trail[0]) > engine.width) {
+        trail.shift()
+    }
+
+    engine.left += velocity * cos(engine.angle)
+    engine.top += velocity * sin(engine.angle)
+
+    let { minPt, minAngle } = getTrackSnap(engine)
+    if (minPt && minPt.u >= 0 && minPt.u <= 1) {
+        // log('snap', minPt, minAngle, engine.angle)
+        engine.left = minPt.x
+        engine.top = minPt.y
+        engine.angle = minAngle
+        engine.setCoords()
+    }
+
+    // find a trail of boxcars and caboooooses
+    let leadCar = engine
+    engine.numCars = 0
+    let { width } = leadCar
+    let sixOClock = trail[0]
+    // log(sixOClock, width)
+    // makeDot({ left: sixOClock.x, top: sixOClock.y })
+    let tailCar = closestCar(sixOClock, width)
+    while (tailCar) {
+        // put car on my ant trail 
+        tailCar.left = sixOClock.x
+        tailCar.top = sixOClock.y
+        tailCar.angle = sixOClock.angle
+        tailCar.following = sixOClock.id
+        tailCar.setCoords()
+        engine.numCars++
+
+        // next
+        leadCar = tailCar
+        width = leadCar.width
+        trail = leadCar.trail = leadCar.trail || []
+        trail.push({ x: leadCar.left, y: leadCar.top, angle: leadCar.angle, id: leadCar.id })
+        while (dist(leadCar, trail[0]) > engine.width) {
+            trail.shift()
+        }
+        sixOClock = trail[0]
+        // log(sixOClock, width)
+        // makeDot({ left: sixOClock.x, top: sixOClock.y })
+        tailCar = closestCar(sixOClock, width)
+    }
+}
+
 let { now } = Date
 let lastTick = now()
 
@@ -409,7 +476,7 @@ function tick() {
         if (item.type === 'circle') {
             canvas.remove(item)
         }
-        delete item.marked
+        delete item.following // TODO FIXME
     })
     eachSwitch(item => {
         const snaps = snapsFor(item)
@@ -420,27 +487,11 @@ function tick() {
     const currentTick = now()
     eachEngine(engine => onMovingEngine({ engine, ticks: currentTick - lastTick }))
     lastTick = currentTick
-    eachObject(item => {
-        if (item.widget === PUFF) {
-            item.getObjects().forEach(dot => {
-                dot.fill = `rgba(255,255,255,${dot.opacity})`
-                // log(dot.opacity)
-                dot.opacity *= 0.995
-                dot.dirty = true
-            })
-            item.dirty = true
-        }
-        if (--item.ticks === 0) {
-            canvas.remove(item)
-        }
-    })
+    fadePuffs()
     let active = activeObject()
     if (active && active.widget === ENGINE) {
         if (!active.isOnScreen()) {
-            const { tr, tl, br } = canvas.vptCoords
-            const width = tr.x - tl.x
-            const height = br.y - tr.y
-            zoomToRect({ left: active.left - width / 2, top: active.top - height / 2, width, height })
+            centerViewportOn(active)
         }
     }
     renderAll()
@@ -471,7 +522,7 @@ function tock() {
         }
     })
 
-    setTimeout(tock, 1000)
+    setTimeout(tock, 500)
 }
 
 $(document).ready(async () => {
@@ -480,7 +531,7 @@ $(document).ready(async () => {
     zoomToItems()
     renderAll()
     setTimeout(tick, Math.round(1000 / 30))
-    setTimeout(tock, 1000)
+    setTimeout(tock, 500)
 })
 
 // why no workee waah
