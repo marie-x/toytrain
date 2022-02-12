@@ -2,17 +2,16 @@
 
 // TODO:
 // - undo/redo
-// - smoke puffs
 // - sounds
 // - rivers
+// - moar trees
 // - bridges
-// - stops
 // - Y-switches
 // - trains should be able to go backwards
 // - physics should use clock time not tick interval
-// - half-curves
 // - selected group should still have snap points
 // - selected group should not lose its global position info
+// - overtaking train should not steal cars :)
 
 function onMoving(evt) {
     const active = activeObject() || activeGroup()
@@ -49,8 +48,13 @@ function onMouseMove(evt) {
     crosshair = pt
     lastMouseMove = { x: evt.e.screenX, y: evt.e.screenY }
 
-    $('#msg').text(js(crosshair))
-
+    $('#msg').text(`(${Math.round(crosshair.x)}, ${Math.round(crosshair.y)})`)
+    let sel = ''
+    let aa = null
+    if (aa = activeObject()) {
+        sel = ` ${aa.widget} (${Math.round(aa.left)}, ${Math.round(aa.top)}, ${Math.round(aa.angle)}º)`
+    }
+    $('#sel').text(sel)
     const { metaKey, shiftKey } = evt.e
 
     // scroll the screen around
@@ -83,14 +87,31 @@ function onCreated(evt) {
     sortByLayer()
 }
 
+let ii = null // global for debug
+
+function onSelection(evt) {
+    const { selected } = evt
+    ii = selected[0]
+    log('selected', ii.widget, ii.id)
+}
+
+function onDeselection(evt) {
+    ii = null
+}
+
 canvas.on({
     'object:moved': onMoved,
     'object:moving': onMoving,
     'object:rotated': onRotated,
     'object:created': onCreated,
+    'selection:created': onSelection,
+    'selection:updated': onSelection,
+    'selection:cleared': onDeselection,
     'mouse:move': onMouseMove,
     'mouse:up': onMouseUp,
 })
+
+const PUFF = 'puff' // not an image, is a collection of circles
 
 const ENGINE = 'engine'
 const TREE = 'tree'
@@ -148,11 +169,48 @@ const art = {
     }
 }
 
+function capitalize(s) {
+    return s.slice(0, 1).toUpperCase() + s.slice(1)
+}
+
+function metaName(evt) {
+    const keys = []
+    evt.metaKey && keys.push('Cmd')
+    evt.ctrlKey && !keys.includes('Cmd') && keys.push('Cmd')
+    evt.altKey && keys.push('Alt')
+    evt.shiftKey && keys.push('Shift')
+    const s = keys.join('')
+    if (s.length) {
+        return s[0].toLowerCase() + s.slice(1)
+    }
+    return ''
+}
+
+$(document).ready(() => {
+    Object.keys(art).sort().forEach(key => {
+        // replace is for -left and -right
+        const verb = ('add' + capitalize(key)).replace('-l', 'L').replace('-r', 'R')
+        $('#buttons').append($(`<button class="verb" id="${verb}">${key}</button>`))
+    })
+
+    $('.verb').click(evt => {
+        let verb = $(evt.currentTarget).attr('action') || evt.currentTarget.id
+        const mods = metaName(evt)
+        if (mods) {
+            verb = $(evt.currentTarget).attr(mods + 'Action') || verb
+        }
+        log('verb', verb, 'mods', mods)
+        tryVerb(verb, evt)
+    })
+
+})
 function sortByLayer() {
     function layer(item) {
         switch (item.widget) {
             case undefined:
-                return 4
+                return 100
+            case PUFF:
+                return 4 // above engine but below bridges
             case ENGINE:
                 return 3
             case BOXCAR:
@@ -305,12 +363,31 @@ addVerb('remove', (evt) => {
     return true
 })
 
-$(document).ready(async () => {
-    resizeCanvas()
-    await load()
-    zoomToItems()
-    renderAll()
-})
+function addPuff(engine) {
+    const elements = Array(20).fill().map((v, i) => {
+        return new fabric.Circle({
+            fill: 'white',
+            radius: 7,
+            originX: 'center',
+            originY: 'center',
+            left: Math.random() * 20 - 10,
+            top: Math.random() * 20 - 10,
+            opacity: 0.5 + 0.4 * Math.random()
+        })
+    })
+    const puff = new fabric.Group(elements, {
+        left: engine.left + 10 * cos(engine.angle),
+        top: engine.top + 10 * sin(engine.angle),
+        width: 50,
+        height: 50,
+        widget: PUFF,
+        ticks: 200,
+        selectable: false,
+        originX: 'center',
+        originY: 'center'
+    })
+    addToCanvas(puff, false)
+}
 
 function setVelocity(v) {
     const selection = activeObject()
@@ -343,11 +420,34 @@ function tick() {
     const currentTick = now()
     eachEngine(engine => onMovingEngine({ engine, ticks: currentTick - lastTick }))
     lastTick = currentTick
+    eachObject(item => {
+        if (item.widget === PUFF) {
+            item.getObjects().forEach(dot => {
+                dot.fill = `rgba(255,255,255,${dot.opacity})`
+                // log(dot.opacity)
+                dot.opacity *= 0.995
+                dot.dirty = true
+            })
+            item.dirty = true
+        }
+        if (--item.ticks === 0) {
+            canvas.remove(item)
+        }
+    })
+    let active = activeObject()
+    if (active && active.widget === ENGINE) {
+        if (!active.isOnScreen()) {
+            const { tr, tl, br } = canvas.vptCoords
+            const width = tr.x - tl.x
+            const height = br.y - tr.y
+            zoomToRect({ left: active.left - width / 2, top: active.top - height / 2, width, height })
+        }
+    }
     renderAll()
     setTimeout(tick, Math.round(1000 / 30))
 }
 
-// 1 fps
+// 2 fps
 function tock() {
     // toggle switch whenever a train goes by
     eachSwitch(swatch => {
@@ -364,11 +464,24 @@ function tock() {
             swatch.minEngine = minEngine
         }
     })
+
+    eachEngine(engine => {
+        if (engine.velocity) {
+            addPuff(engine)
+        }
+    })
+
     setTimeout(tock, 1000)
 }
 
-setTimeout(tick, Math.round(1000 / 30))
-setTimeout(tock, 1000)
+$(document).ready(async () => {
+    resizeCanvas()
+    await load()
+    zoomToItems()
+    renderAll()
+    setTimeout(tick, Math.round(1000 / 30))
+    setTimeout(tock, 1000)
+})
 
 // why no workee waah
 function addTouchHandlers(name) {

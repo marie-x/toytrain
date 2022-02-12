@@ -145,22 +145,22 @@ $(document).ready(() => {
                 setVelocity(0)
                 break
             case 49: // 1
-                setVelocity(0.5)
+                setVelocity(1)
                 break
             case 50: // 2
-                setVelocity(1.0)
+                setVelocity(2)
                 break
             case 51: // 3
-                setVelocity(1.5)
+                setVelocity(3)
                 break
             case 52: // 4
-                setVelocity(2.0)
+                setVelocity(4)
                 break
             case 53: // 5
-                setVelocity(2.5)
+                setVelocity(5)
                 break
             case 54: // 6
-                setVelocity(3.0)
+                setVelocity(6)
                 break
             case 65: // A
                 tryVerb('addCaboose', evt)

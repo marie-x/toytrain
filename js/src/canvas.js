@@ -185,7 +185,7 @@ function nextAngle(item, direction) {
     const legitRulerAngles = [0, 90, 180, 270]
     const legitLightAngles = [0, 45, 90, 135, 180, 225, 270, 315]
     const legitOtherAngles = [0, 22.5, 45, (45 + 90) / 2, 90, (90 + 135) / 2, 135,
-        (135 + 180) / 2, 180, (180 + 225) / 2, 225, (225 + 270 / 2), 270, (270 + 315) / 2, 315, (315 + 360) / 2]
+        (135 + 180) / 2, 180, (180 + 225) / 2, 225, (225 + 270) / 2, 270, (270 + 315) / 2, 315, (315 + 360) / 2]
 
     let legitAngles = legitOtherAngles
     // if (item.isUnit() || item.isPipe()) {
@@ -193,7 +193,7 @@ function nextAngle(item, direction) {
     // } else if (item.isRuler()) {
     //     legitAngles = legitRulerAngles
     // }
-    const currentAngle = Math.round(item.angle + 360) % 360
+    const currentAngle = item.angle
     const i = legitAngles.indexOf(currentAngle)
     const ii = (i + direction + legitAngles.length) % legitAngles.length
     return legitAngles[ii]
@@ -420,7 +420,7 @@ function addToCanvas(item, skipSelect) {
         // FIXME consider deleting or something
     }
     canvas.add(item)
-    if (item.evented) {
+    if (item.evented && item.selectable) {
         setActiveObject(item)
     }
     // _idCache[item.id] = item

@@ -129,7 +129,7 @@ function snapsFor(item) {
             case CURVE2:
                 return [
                     { x: -width / 2, y: height / 2 - W / 2, angle: 180 },
-                    { x: width / 2 - bx, y: -height / 2 + by, angle: -45 / 2 }
+                    { x: width / 2 - bx2, y: -height / 2 + by2, angle: -45 / 2 }
                 ]
             case SWITCH_LEFT:
                 return [
@@ -206,7 +206,7 @@ function segmentsFor(item) {
 function arcsFor(item) {
     const { angle, widget, width, height, left, top } = item
 
-    const radius = height * 1.85    // FIXME almost certainly inaccurate
+    const radius = 194    // weird geometry constant FIXME
     function rawArcs() {
         switch (widget) {
             case CURVE:
