@@ -22,6 +22,28 @@ function onMoving(evt) {
     const active = activeObject() || activeGroup()
     if (active) {
         active.moved = true
+        decouple(active)
+    }
+}
+
+function decouple(car) {
+    // dragged car -> disconnect in both directions if possible
+    if (!car) {
+        return
+    }
+    if (car.following) {
+        const followed = findById(car.following)
+        if (followed) {
+            delete followed.pulling
+        }
+        delete car.following
+    }
+    if (car.pulling) {
+        const pulled = findById(car.pulling)
+        if (pulled) {
+            delete pulled.following
+        }
+        delete car.pulling
     }
 }
 
@@ -44,6 +66,8 @@ function metaDown() {
     }
     renderAll('metaDown')
 }
+
+let lastMouseMove = { x: 0, y: 0 }
 
 function onMouseMove(evt) {
     const pt = canvas.getPointer(evt.e)
@@ -80,7 +104,7 @@ function onMouseMove(evt) {
 }
 
 function onMouseUp(evt) {
-    canvas.getObjects().forEach(target => {
+    allObjects().forEach(target => {
         if (target.moved) {
             canvas.fire('object:moved', { target })
             delete target.moved
@@ -354,11 +378,10 @@ function addPuff(engine) {
         return new fabric.Circle({
             fill: 'white',
             radius: 7,
-            originX: 'center',
-            originY: 'center',
             left: r * cos(theta),
             top: r * sin(theta),
-            opacity: 0.5 + 0.4 * Math.random()
+            opacity: 0.5 + 0.4 * Math.random(),
+            ...CENTER
         })
     })
     const puff = new fabric.Group(elements, {
@@ -368,8 +391,8 @@ function addPuff(engine) {
         height: 50,
         widget: PUFF,
         selectable: false,
-        originX: 'center',
-        originY: 'center'
+        evented: false,
+        ...CENTER
     })
     addToCanvas(puff, false)
 }
@@ -404,6 +427,23 @@ function fadePuffs() {
     })
 }
 
+function closestFreeCar(pt, radius) {
+    // look at all cars, find one 180º behind me
+    let minCar = null, minDist = radius
+    eachCar(item => {
+        if (!item.following) {
+            const d = dist(item, pt)
+            // don't follow yourself
+            if (d < minDist && d > 0 && angleDiff(pt.angle, item.angle) <= 45) {
+                minCar = item
+                minDist = d
+            }
+        }
+    })
+
+    return minCar
+}
+
 // just straight lines at first FIXME
 function onMovingEngine(evt) {
 
@@ -415,7 +455,7 @@ function onMovingEngine(evt) {
 
     // pulling cars slows you down a little
     const numCars = engine.numCars || 0
-    velocity -= numCars / 20
+    velocity -= numCars / 10
 
     let trail = engine.trail = engine.trail || []
     trail.push({ x: engine.left, y: engine.top, angle: engine.angle, id: engine.id })
@@ -428,7 +468,10 @@ function onMovingEngine(evt) {
 
     let { minPt, minAngle } = getTrackSnap(engine)
     if (minPt && minPt.u >= 0 && minPt.u <= 1) {
-        // log('snap', minPt, minAngle, engine.angle)
+        if (angleDiff(engine.angle, minAngle) > 12) {
+            log('bad snap', minPt, minAngle, engine.angle)
+            getTrackSnap(engine, 'debug')
+        }
         engine.left = minPt.x
         engine.top = minPt.y
         engine.angle = minAngle
@@ -440,16 +483,17 @@ function onMovingEngine(evt) {
     engine.numCars = 0
     let { width } = leadCar
     let sixOClock = trail[0]
-    // log(sixOClock, width)
     // makeDot({ left: sixOClock.x, top: sixOClock.y })
-    let tailCar = closestCar(sixOClock, width)
+    let tailCar = findById(leadCar.pulling) || closestFreeCar(sixOClock, width)
     while (tailCar) {
-        // put car on my ant trail 
+        // put car on my ant trail
+        leadCar.pulling = tailCar.id
+        tailCar.following = leadCar.id
         tailCar.left = sixOClock.x
         tailCar.top = sixOClock.y
         tailCar.angle = sixOClock.angle
-        tailCar.following = sixOClock.id
         tailCar.setCoords()
+        tailCar.marked = true // FIXME gross
         engine.numCars++
 
         // next
@@ -463,7 +507,7 @@ function onMovingEngine(evt) {
         sixOClock = trail[0]
         // log(sixOClock, width)
         // makeDot({ left: sixOClock.x, top: sixOClock.y })
-        tailCar = closestCar(sixOClock, width)
+        tailCar = findById(tailCar.pulling) || closestFreeCar(sixOClock, width)
     }
 }
 
@@ -476,7 +520,7 @@ function tick() {
         if (item.type === 'circle') {
             canvas.remove(item)
         }
-        delete item.following // TODO FIXME
+        delete item.marked // TODO FIXME
     })
     eachSwitch(item => {
         const snaps = snapsFor(item)

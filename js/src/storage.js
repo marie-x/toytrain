@@ -33,7 +33,7 @@ async function load(json) {
     return new Promise((resolve, reject) => {
         if (json) {
             canvas.loadFromJSON(json, () => {
-                canvas.getObjects().forEach(rehydrate)
+                allObjects(rehydrate)
                 resolve()
             })
         } else {

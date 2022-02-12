@@ -95,7 +95,7 @@ function allObjects(optionalFilter) {
 }
 
 function eachObject(fn) {
-    return canvas.getObjects().forEach(fn)
+    return allObjects().forEach(fn)
 }
 
 // TODO make top/left and x/y equivalent
@@ -106,7 +106,7 @@ function centerViewportOn(pt) {
     zoomToRect({ left: pt.left - width / 2, top: pt.top - height / 2, width, height })
 }
 
-function zoomToItems(items = canvas.getObjects()) {
+function zoomToItems(items = allObjects()) {
     if (items.length === 0) { return }
     let minX = 100000, minY = 100000, maxX = -100000, maxY = -100000
     items.forEach(item => {
@@ -467,8 +467,7 @@ function makeDot(params) {
         top: params.y || 0,
         fill: 'red',
         radius: 5,
-        originX: 'center',
-        originY: 'center',
+        ...CENTER,
         ...params
     }))
 }
@@ -521,7 +520,7 @@ function onMouseWheel(evt) {
 
     // recalc coords after zoom to prevent offscreen bugs
     // TODO figure out if we can limit to only at-risk items
-    canvas.getObjects().forEach(item => item.visible && item.setCoords())
+    allObjects(item => item.visible && item.setCoords())
 
     renderAll('_onMouseWheel')
     evt.preventDefault()

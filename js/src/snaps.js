@@ -163,7 +163,7 @@ function segmentsFor(item) {
     const W = 45 // track width
     const bx = W / 2 * sin(45)
     const by = W / 2 * cos(45)
-    const x1s = item.switched ? -width / 4 : -width / 2 // switches only
+    const x1s = item.switched ? -width / 3 : -width / 2 // switches only
 
     function rawSegments() {
         switch (widget) {
@@ -182,7 +182,6 @@ function segmentsFor(item) {
                     x2: width / 2 - bx, y2: height / 2 - W / 2
                 }]
             case SWITCH_RIGHT:
-                if (item.switched) { return [] }
                 return [{
                     x1: x1s, y1: -height / 2 + W / 2,
                     x2: width / 2 - bx, y2: -height / 2 + W / 2
@@ -204,7 +203,7 @@ function segmentsFor(item) {
 
 // calc centroids and angle ranges
 function arcsFor(item) {
-    const { angle, widget, width, left, top } = item
+    const { angle, widget, width, left, top, switched } = item
 
     const radius = 194    // weird geometry constant FIXME
     function rawArcs() {
@@ -214,9 +213,9 @@ function arcsFor(item) {
             case CURVE2:
                 return [{ x: -width / 2, y: -radius - 22, start: 45 * 1.5, end: 90 }]
             case SWITCH_LEFT:
-                return [{ x: -width / 2, y: -radius, start: 45, end: 90 }]
+                return [{ x: -width / 2, y: -radius, start: 45, end: switched ? 90 : 85 }]
             case SWITCH_RIGHT:
-                return [{ x: -width / 2, y: radius, start: 270, end: 315 }]
+                return [{ x: -width / 2, y: radius, start: switched ? 270 : 275, end: 315 }]
             default:
                 return []
         }
@@ -315,7 +314,7 @@ function angleDiff(a, b) {
 
 const MIN_INCIDENT = 35
 
-function getTrackSnap(car) {
+function getTrackSnap(car, debug) {
     let minPt = null, minAngle = null, minDist = 35 // don't snap past a certain distance
     eachTrack(track => {
         segmentsFor(track).forEach(seg => {
@@ -323,11 +322,11 @@ function getTrackSnap(car) {
             const segAngle2 = 180 + segAngle
             const fwd = angleDiff(car.angle, segAngle) < MIN_INCIDENT
             const rev = angleDiff(car.angle, segAngle2) < MIN_INCIDENT
-            // log('seg', car.angle, segAngle, fwd, segAngle2, rev)
+            debug && log('track:' + track.id, 'car:' + car.angle, 'fwd:' + segAngle, fwd, 'rev:' + segAngle2, rev)
             if (fwd || rev) {
                 const projection = projectOnSeg(car, seg)
                 const d = dist(car, projection)
-                // log('d:', d)
+                debug && log('d:', d)
                 if (d < minDist) {
                     minPt = projection
                     minAngle = fwd ? segAngle : segAngle2
@@ -362,21 +361,5 @@ function getTrackSnap(car) {
         })
     })
     return { minAngle, minPt }
-}
-
-function closestCar(pt, radius) {
-    // look at all cars, find one 180º behind me
-    let minCar = null, minDist = radius
-    eachCar(item => {
-        if (!item.following) {
-            const d = dist(item, pt)
-            if (d < minDist && angleDiff(pt.angle, item.angle) <= 45) {
-                minCar = item
-                minDist = d
-            }
-        }
-    })
-
-    return minCar
 }
 
