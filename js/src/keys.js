@@ -204,6 +204,9 @@ $(document).ready(() => {
             case 80: // P
                 break
             case 81: // Q
+                if (!cmd) {
+                    tryVerb('addTree2', evt)
+                }
                 break
             case 82: // R
                 tryVerb('addSwitchRight', evt)

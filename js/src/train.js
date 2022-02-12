@@ -13,8 +13,6 @@
 // - physics should use clock time not tick interval
 // - selected group should still have snap points
 // - selected group should not lose its global position info
-// - overtaking train should not steal cars :)
-// - that one switch glitch
 // - load/store gdrive
 // - why do clouds go nuts when i switch away from the tab?
 
@@ -144,6 +142,7 @@ const PUFF = 'puff' // not an image, is a collection of circles
 
 const ENGINE = 'engine'
 const TREE = 'tree'
+const TREE2 = 'tree2'
 const STRAIGHT = 'straight'
 const STRAIGHT2 = 'straight2'
 const SWITCH_LEFT = 'switch-left'
@@ -159,6 +158,9 @@ const ENDPOINT = 'endpoint'
 const art = {
     [TREE]: {
         path: 'tree-f.png'
+    },
+    [TREE2]: {
+        path: 'tree-2-f.png'
     },
     [STRAIGHT]: {
         path: 'straight-f.png'
@@ -279,6 +281,10 @@ async function addWidget(where, widget) {
 
 addVerb('addTree', evt => {
     return addWidget(evt, TREE)
+})
+
+addVerb('addTree2', evt => {
+    return addWidget(evt, TREE2)
 })
 
 function closestTrack(pt, minDist = 200) {
@@ -427,6 +433,19 @@ function fadePuffs() {
     })
 }
 
+function closestCar(car, radius) {
+    let minCar = null, minDist = radius
+    eachCar(item => {
+        const d = dist(car, item)
+        if (d < minDist && d > 0 && angleDiff(car.angle, item.angle) <= 45) {
+            minCar = item
+            minDist = d
+        }
+    })
+
+    return minCar
+}
+
 function closestFreeCar(pt, radius) {
     // look at all cars, find one 180º behind me
     let minCar = null, minDist = radius
@@ -456,6 +475,12 @@ function onMovingEngine(evt) {
     // pulling cars slows you down a little
     const numCars = engine.numCars || 0
     velocity -= numCars / 10
+
+    const closest = closestCar(engine, engine.width)
+    if (closest && closest.following !== engine.id) {
+        // log('whoah')
+        velocity /= 2
+    }
 
     let trail = engine.trail = engine.trail || []
     trail.push({ x: engine.left, y: engine.top, angle: engine.angle, id: engine.id })
