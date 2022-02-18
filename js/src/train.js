@@ -1,6 +1,7 @@
 // train.js
 
 // TODO:
+// - N load/save slots
 // - undo/redo
 // - sounds
 // - rivers
@@ -243,7 +244,7 @@ function sortByLayer() {
             case PUFF:
                 return 4 // above engine but below bridges
             case ENGINE:
-                return 3 // + ((item.numCars || 0) / 1000) // shorter trains to the front of the line
+                return 3
             case BOXCAR:
             case BOXCAR2:
                 return 2
@@ -437,7 +438,7 @@ function closestCar(car, radius) {
     let minCar = null, minDist = radius
     eachCar(item => {
         const d = dist(car, item)
-        if (d < minDist && d > 0 && angleDiff(car.angle, item.angle) <= 45) {
+        if (d < minDist && d > 0 && angleDiff(car.angle, item.angle) <= 150) {
             minCar = item
             minDist = d
         }
@@ -476,10 +477,10 @@ function onMovingEngine(evt) {
     const numCars = engine.numCars || 0
     velocity -= numCars / 10
 
-    const closest = closestCar(engine, engine.width)
+    const closest = closestCar(engine, 2 * engine.width)
     if (closest && closest.following !== engine.id) {
         // log('whoah')
-        velocity /= 2
+        velocity /= 10
     }
 
     let trail = engine.trail = engine.trail || []
